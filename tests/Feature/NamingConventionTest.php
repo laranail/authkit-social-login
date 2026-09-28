@@ -14,14 +14,14 @@ use Simtabi\Laranail\AuthKit\Social\Providers\SocialServiceProvider;
  */
 
 it('keeps its configuration under the laranail namespace', function (): void {
-    expect(config('laranail.authkit-social'))->toBeArray()
-        ->and(config('authkit-social'))->toBeNull();
+    expect(config('laranail.authkit-social-login'))->toBeArray()
+        ->and(config('authkit-social-login'))->toBeNull();
 });
 
 it('never registers a bare publish tag', function (): void {
     $bare = array_filter(
         array_keys(ServiceProvider::publishableGroups()),
-        fn (string $tag): bool => str_contains($tag, 'authkit-social') && ! str_starts_with($tag, 'laranail::'),
+        fn (string $tag): bool => str_contains($tag, 'authkit-social-login') && ! str_starts_with($tag, 'laranail::'),
     );
 
     expect(array_values($bare))->toBe([]);
@@ -37,13 +37,13 @@ it('never registers a bare publish tag', function (): void {
  * keeps the upgrade silent in the way that matters: nothing changes.
  */
 it('is on by default, because it carries behaviour the core used to provide', function (): void {
-    expect(config('laranail.authkit-social.enabled'))->toBeTrue();
+    expect(config('laranail.authkit-social-login.enabled'))->toBeTrue();
 });
 
 it('can still be switched off deliberately', function (): void {
-    config()->set('laranail.authkit-social.enabled', false);
+    config()->set('laranail.authkit-social-login.enabled', false);
 
-    expect(config('laranail.authkit-social.enabled'))->toBeFalse();
+    expect(config('laranail.authkit-social-login.enabled'))->toBeFalse();
 });
 
 /*
@@ -54,7 +54,7 @@ it('can still be switched off deliberately', function (): void {
 it('publishes the social migrations under this package', function (): void {
     $paths = ServiceProvider::pathsToPublish(
         provider: SocialServiceProvider::class,
-        group: 'laranail::authkit-social-migrations',
+        group: 'laranail::authkit-social-login-migrations',
     );
 
     expect(array_map('realpath', array_keys($paths)))
@@ -64,7 +64,7 @@ it('publishes the social migrations under this package', function (): void {
 it('is the only package publishing that tag', function (): void {
     $fromCore = ServiceProvider::pathsToPublish(
         provider: AuthKitServiceProvider::class,
-        group: 'laranail::authkit-social-migrations',
+        group: 'laranail::authkit-social-login-migrations',
     );
 
     expect($fromCore)->toBe([]);

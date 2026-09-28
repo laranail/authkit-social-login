@@ -24,7 +24,7 @@ use Simtabi\Laranail\AuthKit\Social\Http\Controllers\ApiSocialController;
 |
 */
 
-if (! (bool) config(key: 'laranail.authkit-social.api.enabled', default: false)) {
+if (! (bool) config(key: 'laranail.authkit-social-login.api.enabled', default: false)) {
     return;
 }
 

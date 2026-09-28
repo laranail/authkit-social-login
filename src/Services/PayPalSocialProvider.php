@@ -41,7 +41,7 @@ class PayPalSocialProvider extends AbstractProvider
 
     protected function useSandbox(): bool
     {
-        return config(key: 'laranail.authkit-social.paypal.sandbox_mode', default: true);
+        return config(key: 'laranail.authkit-social-login.paypal.sandbox_mode', default: true);
     }
 
     protected function getWebBaseUrl(): string

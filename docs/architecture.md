@@ -7,7 +7,7 @@ How this package relates to the core, why it is a separate package, and why it i
 ```
 laranail/authkit            Simtabi\Laranail\AuthKit\           headless core + REST API
 laranail/authkit-preset     Simtabi\Laranail\AuthKit\Preset\    Blade scaffolding
-laranail/authkit-social             Simtabi\Laranail\AuthKit\Social\         this package
+laranail/authkit-social-login             Simtabi\Laranail\AuthKit\Social\         this package
 ```
 
 The family shares one root namespace and each sibling is a segment under it. Two packages mapping
@@ -41,7 +41,7 @@ the naming guard means the conventions cannot quietly rot before there is code t
   placeholders that must not change behaviour on install. This package carries social login moved
   out of the core, so an upgrading application already has it configured — defaulting off would
   disable it during a routine `composer update` with nothing reported. The switch is
-  `laranail.authkit-social.enabled`; a test asserts it defaults to **true**, and a second asserts it
+  `laranail.authkit-social-login.enabled`; a test asserts it defaults to **true**, and a second asserts it
   can still be turned off.
 - **Compose, do not reimplement.** Laravel Socialite and `socialiteproviders/manager` do the protocol
   work; this package owns identity linking, provisioning and the provider registry.

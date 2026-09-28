@@ -27,7 +27,7 @@ this package:
 ## Require it
 
 ```bash
-composer require laranail/authkit-social
+composer require laranail/authkit-social-login
 ```
 
 The service provider is discovered automatically.
@@ -35,11 +35,11 @@ The service provider is discovered automatically.
 ## Publish the config
 
 ```bash
-php artisan vendor:publish --tag=laranail::authkit-social-config
+php artisan vendor:publish --tag=laranail::authkit-social-login-config
 ```
 
-That writes `config/laranail/authkit-social.php`. The nested directory is deliberate: Laravel turns a
-nested config directory into a nested key, so the file is read as `laranail.authkit-social`, which is the
+That writes `config/laranail/authkit-social-login.php`. The nested directory is deliberate: Laravel turns a
+nested config directory into a nested key, so the file is read as `laranail.authkit-social-login`, which is the
 key the package merges its defaults into.
 
 ## Switch it on

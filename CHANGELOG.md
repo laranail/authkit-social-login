@@ -1,9 +1,41 @@
 # Changelog
 
-All notable changes to `laranail/authkit-social` are documented here.
+All notable changes to `laranail/authkit-social-login` are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Changed
+
+- **Breaking. The package is now `laranail/authkit-social-login`**, matching the repository, which
+  was renamed to `laranail/authkit-social-login` while this manifest went on declaring
+  `laranail/authkit-social`. Composer resolved it the whole time through GitHub's rename redirect,
+  so nothing failed and nothing flagged it — until the redirect is the only thing holding the
+  dependency graph together and a new repository under the freed name would silently take its place.
+
+  Every public name derives from the package slug, so all of them move with it:
+
+  | Surface | Before | After |
+  |---|---|---|
+  | Config key | `laranail.authkit-social` | `laranail.authkit-social-login` |
+  | Config file | `config/laranail/authkit-social.php` | `config/laranail/authkit-social-login.php` |
+  | Publish tag | `laranail::authkit-social-<suffix>` | `laranail::authkit-social-login-<suffix>` |
+  | View namespace | `laranail/authkit-social::` | `laranail/authkit-social-login::` |
+  | Translation namespace | `laranail/authkit-social::` | `laranail/authkit-social-login::` |
+  | Blade component prefix | `laranail-authkit-social::` | `laranail-authkit-social-login::` |
+  | Artisan command | `laranail::authkit-social.<command>` | `laranail::authkit-social-login.<command>` |
+  | Middleware alias | `laranail-authkit-social` | `laranail-authkit-social-login` |
+
+  **A published config file does not migrate itself, and it fails silently.** An application that
+  ran `vendor:publish` holds `config/laranail/authkit-social.php`; this release reads
+  `laranail.authkit-social-login`, so that file stops being consulted and every value in it reverts
+  to the packaged default with no error. Re-publish, or rename the file and its key. Provider env
+  variable names are unchanged.
+
+  Entries below this one name the old keys because that is what shipped under them; they are left
+  as written rather than rewritten into a history that did not happen.
 
 ## [Unreleased]
 

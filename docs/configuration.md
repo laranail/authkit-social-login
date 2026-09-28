@@ -1,18 +1,18 @@
 # Configuration
 
-Everything the package reads lives under `laranail.authkit-social`.
+Everything the package reads lives under `laranail.authkit-social-login`.
 
 ## Where the config lives
 
 | | |
 |---|---|
-| Package default | `config/laranail/authkit-social.php` inside the package |
-| Published to | `config/laranail/authkit-social.php` in the application |
-| Config key | `laranail.authkit-social` |
-| Publish tag | `laranail::authkit-social-config` |
+| Package default | `config/laranail/authkit-social-login.php` inside the package |
+| Published to | `config/laranail/authkit-social-login.php` in the application |
+| Config key | `laranail.authkit-social-login` |
+| Publish tag | `laranail::authkit-social-login-config` |
 
 The key is namespaced because Laravel's config is a single flat map underneath. A package that
-claimed a bare `authkit-social` key would sit one collision away from any other package or the
+claimed a bare `authkit-social-login` key would sit one collision away from any other package or the
 application's own config, and the failure would be silent.
 
 ## Keys
@@ -25,7 +25,7 @@ application's own config, and the failure would be silent.
 
 | Variable | Maps to |
 |---|---|
-| `AUTHKIT_SOCIAL_ENABLED` | `laranail.authkit-social.enabled` |
+| `AUTHKIT_SOCIAL_ENABLED` | `laranail.authkit-social-login.enabled` |
 
 ## Overriding
 

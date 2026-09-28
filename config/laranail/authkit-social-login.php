@@ -10,7 +10,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | DEFAULTS TRUE, UNLIKE EVERY OTHER AUTHKIT SIBLING, AND THE DIFFERENCE IS
-    | DELIBERATE. authkit-social, -ldap, -oauth and -tenancy default to false
+    | DELIBERATE. authkit-social-login, -ldap, -oauth and -tenancy default to false
     | because they are inert placeholders: installing one must not change how an
     | application authenticates.
     |

@@ -20,7 +20,7 @@ use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
  *
  * Everything here moved out of AuthKitServiceProvider when social login left the core. Extends the
  * core through its published seams and never edits it. Every public name is vendor-scoped: the
- * config key is laranail.authkit-social and publish tags are laranail::authkit-social-*, because
+ * config key is laranail.authkit-social-login and publish tags are laranail::authkit-social-login-*, because
  * Laravel keeps these in flat global maps where a second package claiming the same key silently
  * replaces the first.
  *
@@ -35,10 +35,10 @@ class SocialServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('laranail/authkit-social')
+            ->name('laranail/authkit-social-login')
             ->publish(
-                paths: ['config/laranail/authkit-social.php' => config_path(path: 'laranail/authkit-social.php')],
-                tag: 'laranail::authkit-social-config',
+                paths: ['config/laranail/authkit-social-login.php' => config_path(path: 'laranail/authkit-social-login.php')],
+                tag: 'laranail::authkit-social-login-config',
             )
             /*
              * The core published this same tag until the extraction. It drops it in the same change,
@@ -47,13 +47,13 @@ class SocialServiceProvider extends PackageServiceProvider
              */
             ->publish(
                 paths: ['database/migrations/social' => database_path(path: 'migrations')],
-                tag: 'laranail::authkit-social-migrations',
+                tag: 'laranail::authkit-social-login-migrations',
             );
     }
 
     public function packageRegistered(): void
     {
-        $this->mergeConfigFrom(path: $this->packagePath('config/laranail/authkit-social.php'), key: 'laranail.authkit-social');
+        $this->mergeConfigFrom(path: $this->packagePath('config/laranail/authkit-social-login.php'), key: 'laranail.authkit-social-login');
 
         $this->app->bind(abstract: Contracts\SocialRedirectActionInterface::class, concrete: Actions\SocialRedirectAction::class);
         $this->app->bind(abstract: Contracts\SocialCallbackActionInterface::class, concrete: Actions\SocialCallbackAction::class);
@@ -65,7 +65,7 @@ class SocialServiceProvider extends PackageServiceProvider
     {
         // `default: true` matches the shipped config. Reading false when the key is absent would
         // disable social login for anyone who has not published the config file.
-        if (! config(key: 'laranail.authkit-social.enabled', default: true)) {
+        if (! config(key: 'laranail.authkit-social-login.enabled', default: true)) {
             return;
         }
 
@@ -96,7 +96,7 @@ class SocialServiceProvider extends PackageServiceProvider
      */
     private function publishProviderCredentials(): void
     {
-        foreach (config(key: 'laranail.authkit-social', default: []) as $slug => $providerConfig) {
+        foreach (config(key: 'laranail.authkit-social-login', default: []) as $slug => $providerConfig) {
             if ($slug === 'enabled' || ! is_array(value: $providerConfig)) {
                 continue;
             }

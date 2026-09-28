@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `laranail/authkit-social`.
+Thanks for helping improve `laranail/authkit-social-login`.
 
 ## Getting set up
 
@@ -30,16 +30,16 @@ wrong middleware. So every public name carries the vendor and the slug:
 
 | Surface | Shape |
 |---|---|
-| Config key | `laranail.authkit-social` |
-| Config file | `config/laranail/authkit-social.php` |
-| Publish tag | `laranail::authkit-social-<suffix>` |
-| View namespace | `laranail/authkit-social::<view>` |
-| Translation namespace | `laranail/authkit-social::<key>` |
-| Blade component prefix | `laranail-authkit-social::<component>` |
-| Artisan command | `laranail::authkit-social.<command>` |
-| Middleware alias | `laranail-authkit-social` |
+| Config key | `laranail.authkit-social-login` |
+| Config file | `config/laranail/authkit-social-login.php` |
+| Publish tag | `laranail::authkit-social-login-<suffix>` |
+| View namespace | `laranail/authkit-social-login::<view>` |
+| Translation namespace | `laranail/authkit-social-login::<key>` |
+| Blade component prefix | `laranail-authkit-social-login::<component>` |
+| Artisan command | `laranail::authkit-social-login.<command>` |
+| Middleware alias | `laranail-authkit-social-login` |
 
-No bare short aliases. A `authkit-social:install` alias hands back exactly the collision the namespaced
+No bare short aliases. A `authkit-social-login:install` alias hands back exactly the collision the namespaced
 name exists to prevent.
 
 ## Extending the core
