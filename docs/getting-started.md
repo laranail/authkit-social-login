@@ -4,12 +4,12 @@ The smallest setup that does something, and what to expect while the package is 
 
 ## Today
 
-The package installs, registers its config under `laranail.authkit-social`, and stops there. That is the
+The package installs, registers its config under `laranail.authkit-social-login`, and stops there. That is the
 whole behaviour, and it is deliberate — see [architecture](architecture.md) for why the
 implementation waits on the core.
 
 ```php
-config('laranail.authkit-social.enabled');   // false until you set AUTHKIT_SOCIAL_ENABLED=true
+config('laranail.authkit-social-login.enabled');   // false until you set AUTHKIT_SOCIAL_ENABLED=true
 ```
 
 ## What it will look like
@@ -25,7 +25,7 @@ controllers or routes by hand:
 ## Verifying the install
 
 ```bash
-php artisan vendor:publish --tag=laranail::authkit-social-config
+php artisan vendor:publish --tag=laranail::authkit-social-login-config
 php artisan about
 ```
 

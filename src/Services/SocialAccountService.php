@@ -54,7 +54,7 @@ class SocialAccountService
         // Opt-in, and off by default. An application that records whether a password was actually
         // chosen -- rather than generated during social provisioning -- can answer the question this
         // package cannot, and set this to true.
-        return (bool) config(key: 'laranail.authkit-social.unlink.trust_password_column', default: false)
+        return (bool) config(key: 'laranail.authkit-social-login.unlink.trust_password_column', default: false)
             && $this->hasPassword($user);
     }
 

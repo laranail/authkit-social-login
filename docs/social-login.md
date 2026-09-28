@@ -51,7 +51,7 @@ Replace `GOOGLE` with `APPLE`, `X`, `LINKEDIN`, or `PAYPAL` for the other provid
 Publish the social migration before enabling a provider:
 
 ```bash
-php artisan vendor:publish --tag=laranail::authkit-social-migrations
+php artisan vendor:publish --tag=laranail::authkit-social-login-migrations
 php artisan migrate
 ```
 
@@ -123,7 +123,7 @@ unverified or already taken tells an unauthenticated caller which addresses have
 
 ## Adding a provider
 
-The accepted route values are the `SocialProvider` enum cases. Adding a provider requires a package change: add its enum case with an arm in both `assertsEmailVerified()` and `hasVerifiedEmail()`, add its credentials, redirect, and scopes under `laranail.authkit-social`, and ensure Socialite has a driver for that key. First-party Socialite drivers work through the normal `services.<provider>` configuration; a third-party driver must be registered with Socialite's extension mechanism, as PayPal is. Add callback tests for an existing identity, a verified email, an unverified or missing email, and authenticated linking before exposing the new provider.
+The accepted route values are the `SocialProvider` enum cases. Adding a provider requires a package change: add its enum case with an arm in both `assertsEmailVerified()` and `hasVerifiedEmail()`, add its credentials, redirect, and scopes under `laranail.authkit-social-login`, and ensure Socialite has a driver for that key. First-party Socialite drivers work through the normal `services.<provider>` configuration; a third-party driver must be registered with Socialite's extension mechanism, as PayPal is. Add callback tests for an existing identity, a verified email, an unverified or missing email, and authenticated linking before exposing the new provider.
 
 ---
 

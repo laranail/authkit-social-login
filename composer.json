@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laranail/authkit-social",
+    "name": "laranail/authkit-social-login",
     "type": "library",
     "description": "Social login for laranail/authkit: Socialite-backed providers, identity linking and account provisioning.",
     "keywords": [
@@ -13,7 +13,7 @@
         "google"
     ],
     "license": "MIT",
-    "homepage": "https://opensource.simtabi.com/products/laranail/authkit-social",
+    "homepage": "https://opensource.simtabi.com/products/laranail/authkit-social-login",
     "authors": [
         {
             "name": "Simtabi",
@@ -21,9 +21,9 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/laranail/authkit-social/issues",
-        "source": "https://github.com/laranail/authkit-social",
-        "docs": "https://opensource.simtabi.com/documentation/laranail/authkit-social/"
+        "issues": "https://github.com/laranail/authkit-social-login/issues",
+        "source": "https://github.com/laranail/authkit-social-login",
+        "docs": "https://opensource.simtabi.com/documentation/laranail/authkit-social-login/"
     },
     "require": {
         "php": "^8.4.1 || ^8.5",
