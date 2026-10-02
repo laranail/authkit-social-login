@@ -41,17 +41,17 @@ final class SocialWebRoutes
         }
 
         return [
-            'guard'   => config(key: 'laranail.authkit-social-login.web.guard', default: 'web'),
-            'prefix'  => config(key: 'laranail.authkit-social-login.web.prefix', default: 'auth'),
-            'name'    => config(key: 'laranail.authkit-social-login.web.route_name_prefix', default: 'laranail-social.'),
+            'guard'   => config(key: 'authkit-social-login.web.guard', default: 'web'),
+            'prefix'  => config(key: 'authkit-social-login.web.prefix', default: 'auth'),
+            'name'    => config(key: 'authkit-social-login.web.route_name_prefix', default: 'laranail-social.'),
             'primary' => true,
         ];
     }
 
     public static function register(): void
     {
-        if (! config(key: 'laranail.authkit-social-login.enabled', default: true)
-            || ! config(key: 'laranail.authkit-social-login.web.enabled', default: true)) {
+        if (! config(key: 'authkit-social-login.enabled', default: true)
+            || ! config(key: 'authkit-social-login.web.enabled', default: true)) {
             return;
         }
 
@@ -60,14 +60,14 @@ final class SocialWebRoutes
         $mounts = $hasPreset
             ? $preset::mounts()
             : [[
-                'guard'   => config(key: 'laranail.authkit-social-login.web.guard', default: 'web'),
-                'prefix'  => config(key: 'laranail.authkit-social-login.web.prefix', default: 'auth'),
-                'name'    => config(key: 'laranail.authkit-social-login.web.route_name_prefix', default: 'laranail-social.'),
+                'guard'   => config(key: 'authkit-social-login.web.guard', default: 'web'),
+                'prefix'  => config(key: 'authkit-social-login.web.prefix', default: 'auth'),
+                'name'    => config(key: 'authkit-social-login.web.route_name_prefix', default: 'laranail-social.'),
                 'primary' => true,
             ]];
         $middleware = $hasPreset
             ? $preset::webMiddleware()
-            : config(key: 'laranail.authkit-social-login.web.middleware', default: ['web']);
+            : config(key: 'authkit-social-login.web.middleware', default: ['web']);
 
         foreach ($mounts as $mount) {
             self::registerMount($mount, $middleware, $preset);
@@ -82,7 +82,7 @@ final class SocialWebRoutes
             return $preset::afterLoginRedirect();
         }
 
-        return (string) config(key: 'laranail.authkit-social-login.web.after_login', default: '/dashboard');
+        return (string) config(key: 'authkit-social-login.web.after_login', default: '/dashboard');
     }
 
     /** @param array{guard: string, prefix: string, name: string, primary?: bool} $mount

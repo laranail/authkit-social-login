@@ -30,8 +30,8 @@ wrong middleware. So every public name carries the vendor and the slug:
 
 | Surface | Shape |
 |---|---|
-| Config key | `laranail.authkit-social-login` |
-| Config file | `config/laranail/authkit-social-login.php` |
+| Config key | `authkit-social-login` |
+| Config file | `config/authkit-social-login.php` |
 | Publish tag | `laranail::authkit-social-login-<suffix>` |
 | View namespace | `laranail/authkit-social-login::<view>` |
 | Translation namespace | `laranail/authkit-social-login::<key>` |
