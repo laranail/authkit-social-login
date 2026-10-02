@@ -1,6 +1,11 @@
 # Social login
 
-Auth Kit integrates Laravel Socialite but does not register routes or render buttons. Your application chooses which providers to expose, registers a redirect URL with each provider, and supplies the redirect and callback routes.
+`laranail/authkit-social-login` owns the browser social routes, callbacks, linked-account page, and
+Blade button component. Configure which providers to expose, register each callback URL with its
+provider, and render `<x-laranail-authkit-social-login::social-buttons />` in your login or
+registration view. When used with `authkit-preset`, its login and registration views render that
+component automatically and the package routes inherit the preset mounts. The social package can
+also be installed and used on its own.
 
 ## Supported providers and setup
 
@@ -30,9 +35,8 @@ ID. Its `client_secret` is not a static string but a short-lived ES256 JWT signe
 from your developer account, which Apple caps at six months — generate it out of band and rotate it,
 or Apple sign-in starts failing on a date nothing in your repository records. And because it requests
 the `name` and `email` scopes, Apple replies with `response_mode=form_post`, so it **POSTs** the
-callback: the route must accept POST and must not require a CSRF token. `laranail/authkit-preset`
-already registers it that way; a hand-rolled route must do the same or Apple sign-in returns 405 or
-419 with nothing in the log to explain it.
+callback: the route must accept POST and must not require a CSRF token. The package registers it
+that way, and inherits the preset mount when used with `laranail/authkit-preset`.
 
 Apple sends the user's name only on the **first** authorization and never again, and may return a
 per-app relay address on `@privaterelay.appleid.com`. Apple verifies relay addresses, so they are
@@ -69,7 +73,14 @@ public function socials(): MorphMany
 }
 ```
 
-Register a redirect route and callback route whose `{provider}` value is restricted to the supported provider keys. Extend `AbstractSocialRedirectController` for the redirect and `AbstractSocialCallbackController` for the callback. The redirect controller returns an external URL for JSON requests and redirects browsers otherwise. On success, the callback controller creates a session with the configured guard; override `passed()` and `failed()` to choose application-specific responses and redirect targets.
+The package registers the redirect, callback, and connected-account routes. Standalone route prefix,
+guard, middleware, and names are configured under `web` in `laranail.authkit-social-login`; when
+the preset is installed these values come from the preset's mounts. The social button component
+renders configured providers that have a client ID, and can be customized through the `ui` config.
+
+Publish routes with `laranail::authkit-social-login-routes` and set
+`AUTHKIT_SOCIAL_ROUTES_MODE=published` when you want to own the route file. The callback accepts
+both GET and POST and bypasses CSRF validation for OAuth provider callbacks.
 
 ## Identity resolution and account-linking safety
 

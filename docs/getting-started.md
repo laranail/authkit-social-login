@@ -1,36 +1,39 @@
 # Getting started
 
-The smallest setup that does something, and what to expect while the package is a skeleton.
-
-## Today
-
-The package installs, registers its config under `laranail.authkit-social-login`, and stops there. That is the
-whole behaviour, and it is deliberate — see [architecture](architecture.md) for why the
-implementation waits on the core.
-
-```php
-config('laranail.authkit-social-login.enabled');   // false until you set AUTHKIT_SOCIAL_ENABLED=true
-```
-
-## What it will look like
-
-Social login will be driven entirely by configuration and the core's seams. You will not wire
-controllers or routes by hand:
-
-- Socialite 2.0 service provider — metadata exchange, assertion consumer, signature validation
-- OpenID Connect relying party — discovery, authorization code flow with PKCE
-- Tenant-to-IdP mapping, so one application can face many identity providers
-- Just-in-time provisioning through the core’s identity-resolution path
-
-## Verifying the install
+Install the package, configure at least one provider, and run its migration:
 
 ```bash
-php artisan vendor:publish --tag=laranail::authkit-social-login-config
-php artisan about
+composer require laranail/authkit-social-login
+php artisan laranail::authkit-social-login.install --social=google
+php artisan migrate
 ```
 
-`vendor:publish` succeeding with the namespaced tag confirms the provider is registered. If the tag
-is not offered, the package is not installed or discovery is disabled.
+Add the generated client ID and secret to `.env`, then register this callback URL in the provider's
+developer console:
+
+```text
+https://your-app.test/auth/social/google/callback
+```
+
+The package registers web routes and provides a reusable Blade button component. Use it on your
+own login and registration views:
+
+```blade
+<x-laranail-authkit-social-login::social-buttons />
+```
+
+## With authkit-preset
+
+The preset does not install the social package. For the recommended integration, add
+`laranail/authkit-social-login` explicitly to your application. The preset login and registration
+views detect the package component and render it when available. Social routes automatically use
+the preset's configured prefixes, guards, middleware, and route names.
+
+The social package also works without the preset. In that case, configure its `web` route settings
+and include its Blade component in your own views.
+
+See [installation](installation.md), [configuration](configuration.md), and
+[social login](social-login.md) for provider details and customization.
 
 ---
 

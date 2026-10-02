@@ -1,37 +1,57 @@
 # Configuration
 
-Everything the package reads lives under `laranail.authkit-social-login`.
+Package settings live under `laranail.authkit-social-login`. Publish them with:
 
-## Where the config lives
+```bash
+php artisan vendor:publish --tag=laranail::authkit-social-login-config
+```
 
-| | |
-|---|---|
-| Package default | `config/laranail/authkit-social-login.php` inside the package |
-| Published to | `config/laranail/authkit-social-login.php` in the application |
-| Config key | `laranail.authkit-social-login` |
-| Publish tag | `laranail::authkit-social-login-config` |
+## Main settings
 
-The key is namespaced because Laravel's config is a single flat map underneath. A package that
-claimed a bare `authkit-social-login` key would sit one collision away from any other package or the
-application's own config, and the failure would be silent.
-
-## Keys
-
-| Key | Type | Default | What it does |
+| Key | Type | Default | Purpose |
 |---|---|---|---|
-| `enabled` | bool | `false` | Master switch. While false the provider registers nothing. |
+| `enabled` | bool | `true` | Enables social package behavior. |
+| `providers` | string array | `['google']` | Provider slugs shown by the button component. |
+| `ui` | array | `[]` | Per-provider button label, icon, CSS class, and ordering overrides. |
+| `api.enabled` | bool | `false` | Registers stateless API social sign-in endpoints. |
+| `unlink.trust_password_column` | bool | `false` | Allows unlinking the last provider when the application knows a password was chosen. |
 
-## Environment
+## Web routes
 
-| Variable | Maps to |
-|---|---|
-| `AUTHKIT_SOCIAL_ENABLED` | `laranail.authkit-social-login.enabled` |
+| Key | Type | Default | Purpose |
+|---|---|---|---|
+| `web.enabled` | bool | `true` | Enables browser social routes and account management. |
+| `web.guard` | string | `web` | Standalone authentication guard. |
+| `web.prefix` | string | `auth` | Standalone URL prefix. |
+| `web.route_name_prefix` | string | `laranail-social.` | Standalone route-name prefix. |
+| `web.middleware` | string array | `['web']` | Middleware for standalone routes. |
+| `web.after_login` | string | `/dashboard` | Successful sign-in destination. |
+| `web.failed_redirect` | string | `/login` | Failed sign-in destination. |
+| `web.routes_mode` | string | `package` | Use package routes or load a published route file (`published`). |
+
+When `authkit-preset` is installed and configured, the social routes inherit its route mounts,
+guards, middleware, and route-name prefixes. These settings apply when the social package runs
+independently.
+
+## Provider configuration
+
+Each provider block carries its Socialite credentials and supported scopes. Credentials are read
+from the existing `AUTHKIT_<PROVIDER>_*` environment variables and copied into Laravel's
+`services.*` config for Socialite. The installer can select providers and append callback URLs to
+`.env`:
+
+```bash
+php artisan laranail::authkit-social-login.install --social=google --social=apple
+```
+
+See [social login](social-login.md) for all supported providers, credential names, and callback
+requirements.
 
 ## Overriding
 
-Publishing gives you the file; edit it there. `mergeConfigFrom` merges the package defaults
-*underneath* your published values, so a key you omit falls back to the package default and a key
-you set wins. The merge is shallow, so replace a nested array wholesale rather than partially.
+`mergeConfigFrom` provides defaults beneath the application's published config. Edit the published
+file to override settings. Laravel's config merge is shallow, so replace nested arrays such as
+`web` or `ui` as a whole when customizing them.
 
 ---
 
