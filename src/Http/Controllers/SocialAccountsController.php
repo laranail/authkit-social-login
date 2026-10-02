@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 use Simtabi\Laranail\AuthKit\Social\Services\SocialAccountService;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialProviders;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 use Simtabi\Laranail\AuthKit\Social\Contracts\UnlinkSocialAccountInterface;
 
@@ -18,13 +19,25 @@ class SocialAccountsController
     {
         $user = $request->user();
 
+        $linkedAccounts = $accounts->forUser($user)->map(fn ($social): array => [
+            'slug'       => is_string($social->provider) ? $social->provider : $social->provider->slug(),
+            'label'      => is_string($social->provider) ? $social->provider : $social->provider->label(),
+            'email'      => $social->email,
+            'icon'       => 'laranail/authkit-social-login::icons.' . (is_string($social->provider) ? $social->provider : $social->provider->slug()),
+            'can_unlink' => ! is_string($social->provider) && $accounts->canUnlink($user, $social->provider),
+        ]);
+        $linkedSlugs = $linkedAccounts->pluck('slug')->all();
+
         return view('laranail/authkit-social-login::social-accounts', [
-            'accounts' => $accounts->forUser($user)->map(fn ($social): array => [
-                'slug'       => is_string($social->provider) ? $social->provider : $social->provider->slug(),
-                'label'      => is_string($social->provider) ? $social->provider : $social->provider->label(),
-                'email'      => $social->email,
-                'can_unlink' => ! is_string($social->provider) && $accounts->canUnlink($user, $social->provider),
-            ]),
+            'accounts' => $linkedAccounts,
+            'supportedProviders' => collect(SocialProviders::buttons())
+                ->map(fn (array $provider): array => [
+                    'slug' => $provider['slug'],
+                    'label' => $provider['label'],
+                    'icon' => $provider['icon'],
+                    'connected' => in_array($provider['slug'], $linkedSlugs, true),
+                ])
+                ->values(),
         ]);
     }
 

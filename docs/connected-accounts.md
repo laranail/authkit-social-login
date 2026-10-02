@@ -1,8 +1,11 @@
-# Connected accounts
+# Social accounts
 
 The package registers a page listing the signed-in user's linked providers at
 `GET /auth/user/social-accounts`; `DELETE /auth/user/social-accounts/{provider}` removes a link.
-When used with `authkit-preset`, the routes inherit its configured guard, prefix, and middleware.
+The page shows configured providers and whether each one is connected, as well as linked account
+details and disconnect controls. When used with `authkit-preset`, the routes inherit its configured
+guard, prefix, and middleware, and the preset dashboard links to the page when this package is
+installed.
 
 ## The last sign-in method
 
@@ -15,7 +18,7 @@ If the application separately records that a password was explicitly chosen, it 
 of the last link:
 
 ```php
-// config/laranail/authkit-social-login.php
+// config/authkit-social-login.php
 'unlink' => ['trust_password_column' => true],
 ```
 
