@@ -37,6 +37,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Entries below this one name the old keys because that is what shipped under them; they are left
   as written rather than rewritten into a history that did not happen.
 
+### Added
+
+- **Web routes.** `social.redirect`, `social.callback` and the authenticated connected-account
+  endpoints, configured under `web.*` (enabled, guard, prefix, route-name prefix, middleware,
+  after_login, failed_redirect, routes_mode). Each defaults to the preset's value, so an installed
+  `laranail/authkit-preset` keeps owning the shape and this package inherits it.
+- **A reusable buttons component**, `<x-laranail-authkit-social-login::social-buttons />`, plus the
+  five provider icons and a `ui` block for label, icon, class and order. A provider renders only
+  when it is both listed in `providers` and has a client ID.
+- **An installer**, `php artisan laranail::authkit-social-login.install`, which publishes the config
+  and migration, records providers, and writes the OAuth credential and callback variables.
+
+  The callback accepts GET and POST and drops the CSRF middleware, because Apple forces
+  `response_mode=form_post` and POSTs from its own servers with no session or token.
+
 ## [Unreleased]
 
 ### Fixed
