@@ -7,7 +7,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Social Accounts management page** listing supported providers and showing which accounts are linked. It uses the authkit-preset dashboard when that package is installed and remains usable without preset components otherwise.
+- **Automatic migration publishing during installation**, including when no provider is selected, so the `socials` table is available when the account page is used.
+
 ### Changed
+
+- **Breaking. The social config is now published at `config/authkit-social-login.php` and read
+  under `authkit-social-login`.** Move a published `config/laranail/authkit-social-login.php` to
+  the new path; application overrides under `laranail.authkit-social-login.*` must also move to
+  `authkit-social-login.*`. Provider environment variable names are unchanged.
 
 - **Breaking. The package is now `laranail/authkit-social-login`**, matching the repository, which
   was renamed to `laranail/authkit-social-login` while this manifest went on declaring

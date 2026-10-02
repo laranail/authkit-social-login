@@ -45,7 +45,7 @@ it('unlinks a provider when another one remains', function (): void {
 it('lets an application that knows better opt in', function (): void {
     // An application recording whether a password was actually chosen can answer the question this
     // package cannot.
-    config()->set('laranail.authkit-social-login.unlink.trust_password_column', true);
+    config()->set('authkit-social-login.unlink.trust_password_column', true);
     $user = User::factory()->create();
     linkProvider($user, 'google');
 

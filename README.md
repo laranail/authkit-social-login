@@ -32,7 +32,8 @@ composer require laranail/authkit-social-login
 ```
 
 The package is enabled by default. Use its installer to configure providers, publish the migration,
-and add provider credentials:
+and add provider credentials. The migration is published even when you have not selected a provider
+yet; run `php artisan migrate` to create the table used by connected-account management:
 
 ```bash
 php artisan laranail::authkit-social-login.install --social=google
@@ -52,7 +53,7 @@ Full documentation: <https://opensource.simtabi.com/documentation/laranail/authk
 - [Installation](docs/installation.md) — requirements, standalone and preset-assisted install
 - [Getting started](docs/getting-started.md) — configure providers and wire the login buttons
 - [Social login](docs/social-login.md) — providers, callbacks and identity linking
-- [Configuration](docs/configuration.md) — every key in `laranail.authkit-social-login`
+- [Configuration](docs/configuration.md) — every key in `authkit-social-login`
 - [Architecture](docs/architecture.md) — how this package extends the core, and why it is built this way
 - [Release](docs/release.md) — versioning, tagging and what a release must carry
 

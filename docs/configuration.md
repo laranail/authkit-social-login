@@ -1,6 +1,6 @@
 # Configuration
 
-Package settings live under `laranail.authkit-social-login`. Publish them with:
+Package settings live under `authkit-social-login`. Publish them with:
 
 ```bash
 php artisan vendor:publish --tag=laranail::authkit-social-login-config

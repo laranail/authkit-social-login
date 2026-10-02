@@ -33,9 +33,9 @@ class InstallSocialLoginCommand extends Command
         ]);
 
         $this->writeProviders($providers);
+        $this->publishMigration();
 
         if ($providers !== []) {
-            $this->publishMigration();
             $this->writeEnvironment($providers);
             $this->info('Social login configured for: ' . implode(', ', $providers) . '.');
         }
@@ -48,7 +48,7 @@ class InstallSocialLoginCommand extends Command
             $this->line('Set AUTHKIT_SOCIAL_ROUTES_MODE=published and load routes/laranail-authkit-social-login-web.php from the application route bootstrap.');
         }
 
-        $this->line('Review config/laranail/authkit-social-login.php and run php artisan migrate.');
+        $this->line('Review config/authkit-social-login.php and run php artisan migrate.');
 
         return self::SUCCESS;
     }
@@ -82,7 +82,7 @@ class InstallSocialLoginCommand extends Command
     /** @param array<int, string> $providers */
     private function writeProviders(array $providers): void
     {
-        $path = config_path('laranail/authkit-social-login.php');
+        $path = config_path('authkit-social-login.php');
 
         if (! is_file($path) || $providers === []) {
             return;
@@ -113,7 +113,7 @@ class InstallSocialLoginCommand extends Command
     /** @param array<int, string> $providers */
     private function writeEnvironment(array $providers): void
     {
-        $prefix = (string) config(key: 'laranail.authkit-social-login.web.prefix', default: 'auth');
+        $prefix = (string) config(key: 'authkit-social-login.web.prefix', default: 'auth');
 
         if (class_exists(\Simtabi\Laranail\AuthKit\Preset\Support\AuthPreset::class)) {
             $mounts = \Simtabi\Laranail\AuthKit\Preset\Support\AuthPreset::mounts();

@@ -21,7 +21,7 @@ it('ships with API social sign-in off', function (): void {
     // The endpoint widens the authentication surface, and an application serving only a browser has
     // no use for it. Asserted against the shipped config rather than the route table, because the
     // test environment turns it on to have something to exercise.
-    $shipped = require __DIR__ . '/../../config/laranail/authkit-social-login.php';
+    $shipped = require __DIR__ . '/../../config/authkit-social-login.php';
 
     expect($shipped['api']['enabled'])->toBeFalse();
 });

@@ -13,9 +13,9 @@ use Simtabi\Laranail\AuthKit\Social\Providers\SocialServiceProvider;
  * than the provider source, so the guard survives a refactor of the registration code.
  */
 
-it('keeps its configuration under the laranail namespace', function (): void {
-    expect(config('laranail.authkit-social-login'))->toBeArray()
-        ->and(config('authkit-social-login'))->toBeNull();
+it('keeps its configuration at the package root', function (): void {
+    expect(config('authkit-social-login'))->toBeArray()
+        ->and(config('laranail.authkit-social-login'))->toBeNull();
 });
 
 it('never registers a bare publish tag', function (): void {
@@ -37,13 +37,13 @@ it('never registers a bare publish tag', function (): void {
  * keeps the upgrade silent in the way that matters: nothing changes.
  */
 it('is on by default, because it carries behaviour the core used to provide', function (): void {
-    expect(config('laranail.authkit-social-login.enabled'))->toBeTrue();
+    expect(config('authkit-social-login.enabled'))->toBeTrue();
 });
 
 it('can still be switched off deliberately', function (): void {
-    config()->set('laranail.authkit-social-login.enabled', false);
+    config()->set('authkit-social-login.enabled', false);
 
-    expect(config('laranail.authkit-social-login.enabled'))->toBeFalse();
+    expect(config('authkit-social-login.enabled'))->toBeFalse();
 });
 
 /*

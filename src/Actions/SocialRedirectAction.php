@@ -27,7 +27,7 @@ class SocialRedirectAction implements SocialRedirectActionInterface
         // Scopes and optional parameters were configurable and ignored: nothing read them, so the
         // only scopes in effect were the driver's defaults. `with` is what carries Google's `hd`
         // domain restriction and `prompt=select_account`, neither of which was reachable before.
-        $settings = config(key: "laranail.authkit-social-login.{$provider->slug()}", default: []);
+        $settings = config(key: "authkit-social-login.{$provider->slug()}", default: []);
 
         if (is_array($settings)) {
             if (! empty($settings['scopes']) && is_array($settings['scopes']) && method_exists($driver, 'scopes')) {

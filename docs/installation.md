@@ -36,9 +36,8 @@ The service provider is discovered automatically.
 php artisan vendor:publish --tag=laranail::authkit-social-login-config
 ```
 
-That writes `config/laranail/authkit-social-login.php`. The nested directory is deliberate: Laravel turns a
-nested config directory into a nested key, so the file is read as `laranail.authkit-social-login`, which is the
-key the package merges its defaults into.
+That writes `config/authkit-social-login.php`, which Laravel loads under the `authkit-social-login`
+key.
 
 ## Configure providers
 
@@ -47,9 +46,11 @@ php artisan laranail::authkit-social-login.install --social=google
 php artisan migrate
 ```
 
-The installer publishes the package config, selects providers, publishes the social migration, and
-adds provider credential and callback variables to `.env` when the files exist. Add the generated
-client ID and secret, then register each callback URL with its provider.
+The installer publishes the package config and social migration, selects providers, and adds
+provider credential and callback variables to `.env` when the files exist. The migration is
+published even when no provider is selected yet, since the connected-accounts route needs the
+`socials` table. Run `php artisan migrate`, then add the generated client ID and secret and register
+each callback URL with its provider.
 
 ## Using the package with authkit-preset
 
