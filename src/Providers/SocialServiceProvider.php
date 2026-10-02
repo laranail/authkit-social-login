@@ -14,6 +14,7 @@ use SocialiteProviders\Apple\AppleExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
+use Simtabi\Laranail\AuthKit\Social\Commands\InstallSocialLoginCommand;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 
 /**
@@ -70,6 +71,10 @@ class SocialServiceProvider extends PackageServiceProvider
     {
         $this->loadViewsFrom($this->packagePath('resources/views'), 'laranail/authkit-social-login');
         Blade::anonymousComponentPath($this->packagePath('resources/views/components'), 'laranail-authkit-social-login');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([InstallSocialLoginCommand::class]);
+        }
 
         // `default: true` matches the shipped config. Reading false when the key is absent would
         // disable social login for anyone who has not published the config file.
