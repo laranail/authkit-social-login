@@ -1,6 +1,6 @@
 # Architecture
 
-How this package relates to the core, why it is a separate package, and why it is empty.
+How this package relates to the core and preset, and why it is a separate package.
 
 ## Where it sits
 
@@ -22,15 +22,9 @@ never use. Keeping it a sibling means the core stays small and this cost is opt-
 The price of that choice is that the seams have to be real. A sub-package that cannot do its job
 without editing the core is not extending the core, it is forking it.
 
-## Why it is empty
-
-This package binds to core seams that do not exist yet, chiefly **`ResolveIdentityInterface`**. Those seams
-change a published contract, so they land in `laranail/authkit` first — building here against a
-contract that is still moving would mean rewriting this package when it settles.
-
-Until then the package ships its skeleton: the public names, the config key, CI, and the tests that
-guard them. That is not busywork — claiming the names early is what stops a later collision, and
-the naming guard means the conventions cannot quietly rot before there is code to protect.
+The package owns the complete social login flow: provider configuration, Socialite integration,
+routes and callback controllers, identity linking, migrations, connected-account management, and
+the reusable Blade buttons. It can be installed independently or alongside the preset.
 
 ## Rules this package holds itself to
 
@@ -43,8 +37,8 @@ the naming guard means the conventions cannot quietly rot before there is code t
   disable it during a routine `composer update` with nothing reported. The switch is
   `laranail.authkit-social-login.enabled`; a test asserts it defaults to **true**, and a second asserts it
   can still be turned off.
-- **Compose, do not reimplement.** Laravel Socialite and `socialiteproviders/manager` do the protocol
-  work; this package owns identity linking, provisioning and the provider registry.
+- **Compose, do not reimplement.** Laravel Socialite and `socialiteproviders/manager` do protocol
+  work; this package owns routes, UI, identity linking, provisioning and the provider registry.
 
 ## Scope
 
@@ -53,6 +47,8 @@ the naming guard means the conventions cannot quietly rot before there is code t
 - Identity linking and just-in-time provisioning, including the `email_verified` matrix that decides
   when a social identity may attach to an existing account
 - The `socials` table and its model — a polymorphic store of provider tokens and profile data
+- A reusable Blade component and icons for social login buttons
+- Standalone web routes, which inherit preset mounts when `authkit-preset` is installed
 
 Out of scope, and deliberately so: **`laranail/authkit-oauth`** owns OAuth *authentication* plus the
 backend side — app registration, permissions, integrations. This package is the consumer half only.

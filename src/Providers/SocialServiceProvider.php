@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\AuthKit\Social\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Simtabi\Laranail\Package\Tools\Package;
 use Simtabi\Laranail\AuthKit\Social\Actions;
@@ -13,6 +14,7 @@ use SocialiteProviders\Apple\AppleExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
+use Simtabi\Laranail\AuthKit\Social\Commands\InstallSocialLoginCommand;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 
 /**
@@ -48,6 +50,10 @@ class SocialServiceProvider extends PackageServiceProvider
             ->publish(
                 paths: ['database/migrations/social' => database_path(path: 'migrations')],
                 tag: 'laranail::authkit-social-login-migrations',
+            )
+            ->publish(
+                paths: ['routes/web.php' => base_path(path: 'routes/laranail-authkit-social-login-web.php')],
+                tag: 'laranail::authkit-social-login-routes',
             );
     }
 
@@ -63,6 +69,13 @@ class SocialServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->loadViewsFrom($this->packagePath('resources/views'), 'laranail/authkit-social-login');
+        Blade::anonymousComponentPath($this->packagePath('resources/views/components'), 'laranail-authkit-social-login');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([InstallSocialLoginCommand::class]);
+        }
+
         // `default: true` matches the shipped config. Reading false when the key is absent would
         // disable social login for anyone who has not published the config file.
         if (! config(key: 'laranail.authkit-social-login.enabled', default: true)) {
@@ -78,6 +91,11 @@ class SocialServiceProvider extends PackageServiceProvider
             abstract: Contracts\UnlinkSocialAccountInterface::class,
             concrete: Actions\UnlinkSocialAccount::class,
         );
+
+        if (config(key: 'laranail.authkit-social-login.web.enabled', default: true)
+            && config(key: 'laranail.authkit-social-login.web.routes_mode', default: 'package') === 'package') {
+            $this->loadRoutesFrom($this->packagePath('routes/web.php'));
+        }
 
         $this->loadRoutesFrom($this->packagePath('routes/api.php'));
 

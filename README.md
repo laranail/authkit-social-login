@@ -25,18 +25,23 @@ application's `composer.json`:
 ]
 ```
 
-Then:
+Then require the social package explicitly:
 
 ```bash
 composer require laranail/authkit-social-login
 ```
 
-The package is inert until you switch it on, so installing it cannot change how your application
-authenticates:
+The package is enabled by default. Use its installer to configure providers, publish the migration,
+and add provider credentials:
 
-```env
-AUTHKIT_SOCIAL_ENABLED=true
+```bash
+php artisan laranail::authkit-social-login.install --social=google
 ```
+
+You can use it independently with its own web routes and Blade component. With
+`laranail/authkit-preset`, it automatically uses the preset's route mounts and middleware, and the
+preset login and registration pages render its buttons when the package is installed. The preset
+does not require or install this package; install it separately when social login is wanted.
 
 ## <a name="documentation"></a>Documentation
 
@@ -44,20 +49,12 @@ Full documentation: <https://opensource.simtabi.com/documentation/laranail/authk
 
 ### Guides
 
-- [Installation](docs/installation.md) — requirements, the repositories block, publishing config
-- [Getting started](docs/getting-started.md) — the smallest working setup
+- [Installation](docs/installation.md) — requirements, standalone and preset-assisted install
+- [Getting started](docs/getting-started.md) — configure providers and wire the login buttons
+- [Social login](docs/social-login.md) — providers, callbacks and identity linking
 - [Configuration](docs/configuration.md) — every key in `laranail.authkit-social-login`
 - [Architecture](docs/architecture.md) — how this package extends the core, and why it is built this way
 - [Release](docs/release.md) — versioning, tagging and what a release must carry
-
-## Status
-
-Skeleton. The public names, config key and CI are in place and guarded by tests; the behaviour is
-not implemented yet, and the package does nothing while `laranail.authkit-social-login.enabled` is false.
-
-It waits on extension seams in `laranail/authkit` — chiefly `ResolveIdentityInterface`. Those change a published
-contract, so they land in the core before anything is built here. See
-[docs/architecture.md](docs/architecture.md).
 
 ## Community
 

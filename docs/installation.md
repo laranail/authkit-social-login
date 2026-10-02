@@ -1,6 +1,6 @@
 # Installation
 
-Three steps: add the repositories block, require the package, switch it on.
+Add the repositories block, require the package, then configure the providers you want.
 
 ## Requirements
 
@@ -18,9 +18,7 @@ this package:
     { "type": "vcs", "url": "https://github.com/laranail/authkit.git" },
     { "type": "vcs", "url": "https://github.com/laranail/console.git" },
     { "type": "vcs", "url": "https://github.com/laranail/enumerator.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/captcha.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/db-tools.git" }
+    { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" }
 ]
 ```
 
@@ -42,14 +40,24 @@ That writes `config/laranail/authkit-social-login.php`. The nested directory is 
 nested config directory into a nested key, so the file is read as `laranail.authkit-social-login`, which is the
 key the package merges its defaults into.
 
-## Switch it on
+## Configure providers
 
-```env
-AUTHKIT_SOCIAL_ENABLED=true
+```bash
+php artisan laranail::authkit-social-login.install --social=google
+php artisan migrate
 ```
 
-Until this is true the package registers nothing. Installing it cannot change how an application
-authenticates on its own — a property the test suite asserts.
+The installer publishes the package config, selects providers, publishes the social migration, and
+adds provider credential and callback variables to `.env` when the files exist. Add the generated
+client ID and secret, then register each callback URL with its provider.
+
+## Using the package with authkit-preset
+
+The preset has no dependency on this package, including as a development dependency. Add this
+package separately to opt into social login. Once installed, the preset detects the social button
+component on login and registration pages, and this package inherits the preset route mounts,
+guards, and middleware. The social package remains usable without the preset; configure its `web`
+settings and render its Blade component from your own views.
 
 ---
 

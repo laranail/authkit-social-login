@@ -85,6 +85,21 @@ return [
         'enabled' => (bool) env(key: 'AUTHKIT_SOCIAL_API_ENABLED', default: false),
     ],
 
+    'web' => [
+        'enabled'           => (bool) env(key: 'AUTHKIT_SOCIAL_WEB_ENABLED', default: true),
+        'guard'             => env(key: 'AUTHKIT_SOCIAL_GUARD', default: env(key: 'AUTHKIT_PRESET_GUARD', default: 'web')),
+        'prefix'            => env(key: 'AUTHKIT_SOCIAL_WEB_PREFIX', default: env(key: 'AUTHKIT_PRESET_WEB_PREFIX', default: 'auth')),
+        'route_name_prefix' => env(key: 'AUTHKIT_SOCIAL_ROUTE_NAME_PREFIX', default: 'laranail-social.'),
+        'middleware'        => ['web'],
+        'after_login'       => env(key: 'AUTHKIT_SOCIAL_AFTER_LOGIN', default: env(key: 'AUTHKIT_PRESET_AFTER_SOCIAL_LOGIN', default: '/dashboard')),
+        'failed_redirect'   => env(key: 'AUTHKIT_SOCIAL_FAILED_REDIRECT', default: '/login'),
+        'routes_mode'       => env(key: 'AUTHKIT_SOCIAL_ROUTES_MODE', default: 'package'),
+    ],
+
+    'providers' => ['google'],
+
+    'ui' => [],
+
     'google' => [
         'client_id'     => env(key: 'AUTHKIT_GOOGLE_CLIENT_ID'),
         'client_secret' => env(key: 'AUTHKIT_GOOGLE_CLIENT_SECRET'),
