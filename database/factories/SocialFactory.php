@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 
 /**
- * @extends Factory<\Simtabi\Laranail\AuthKit\Models\Social>
+ * @extends Factory<\Simtabi\Laranail\AuthKit\Social\Models\Social>
  */
 class SocialFactory extends Factory
 {

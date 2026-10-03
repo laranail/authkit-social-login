@@ -26,6 +26,8 @@ The account page disables removal when it would eliminate the user's final sign-
 Provider links remain listable and removable even if an optional provider integration is later
 uninstalled.
 
+See [social login](social-login.md) for how identities are linked in the first place.
+
 ---
 
-[← Social login](social-login.md)
+[← Docs index](../README.md#documentation)

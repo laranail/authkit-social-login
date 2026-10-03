@@ -61,11 +61,13 @@ php artisan migrate
 
 The migration creates a polymorphic `socials` table and enforces uniqueness for the provider/provider-user-ID pair. It stores the provider profile fields and access, refresh, and expiry values returned by Socialite. Treat those tokens as sensitive data: restrict database access and do not expose the model directly in an API response.
 
-Add the relation to every authenticatable model that can own a social identity:
+To reach a user's linked identities as `$user->socials`, add the relation to every authenticatable
+model that can own one. The package itself never calls it: it queries the `socials` table by
+`socialable_type` and `socialable_id`, so sign-in works without it.
 
 ```php
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Simtabi\Laranail\AuthKit\Models\Social;
+use Simtabi\Laranail\AuthKit\Social\Models\Social;
 
 public function socials(): MorphMany
 {
