@@ -54,7 +54,15 @@ You can use it independently with its own web routes and Blade component. With
 preset login and registration pages render its buttons when the package is installed. The preset
 does not require or install this package; install it separately when social login is wanted.
 
-## Quick start
+## Quick start guide and usage
+
+### Getting started
+
+Nothing beyond the Install steps above: the installer publishes the config and the `socials`
+migration, and the `AUTHKIT_GOOGLE_*` values in `.env` plus the callback URL registered with Google
+complete the setup. Clear the configuration cache after changing those values.
+
+### Usage
 
 ```blade
 {{-- resources/views/auth/login.blade.php: renders a "Continue with Google" link to /auth/social/google --}}
