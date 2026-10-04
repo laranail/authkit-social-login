@@ -25,15 +25,16 @@ interactive terminal and it asks which providers to enable.
 
 ## 2. Add the credentials
 
-Add the generated client ID and secret to `.env`:
+The installer appends these to `.env` with the credentials empty and the redirect resolved to an
+absolute URL from `APP_URL` at install time. Fill in the client ID and secret Google issued:
 
 ```env
 AUTHKIT_GOOGLE_CLIENT_ID=
 AUTHKIT_GOOGLE_CLIENT_SECRET=
-AUTHKIT_GOOGLE_REDIRECT="${APP_URL}/auth/social/google/callback"
+AUTHKIT_GOOGLE_REDIRECT=https://your-app.test/auth/social/google/callback
 ```
 
-Then register this callback URL in the provider's developer console:
+Then register the same callback URL in the provider's developer console:
 
 ```text
 https://your-app.test/auth/social/google/callback

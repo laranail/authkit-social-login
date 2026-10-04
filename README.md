@@ -20,8 +20,8 @@ application's `composer.json`:
     { "type": "vcs", "url": "https://github.com/laranail/console.git" },
     { "type": "vcs", "url": "https://github.com/laranail/enumerator.git" },
     { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/captcha.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/db-tools.git" }
+    { "type": "composer", "url": "https://repo.packagist.org", "exclude": ["laranail/*"] },
+    { "packagist.org": false }
 ]
 ```
 
@@ -58,19 +58,39 @@ does not require or install this package; install it separately when social logi
 
 ### Getting started
 
-Nothing beyond the Install steps above: the installer publishes the config and the `socials`
-migration, and the `AUTHKIT_GOOGLE_*` values in `.env` plus the callback URL registered with Google
-complete the setup. Clear the configuration cache after changing those values.
+The installer above does all of this; these are the pieces it touches, for a manual setup:
+
+- **Publish tags** — `laranail::authkit-social-login-config` (writes `config/authkit-social-login.php`),
+  `laranail::authkit-social-login-migrations` (the `socials` table) and, only if you want to own the
+  route file, `laranail::authkit-social-login-routes`.
+- **Migrations** — run `php artisan migrate` after publishing; the package does not load its
+  migrations automatically.
+- **Env keys** — per provider, `AUTHKIT_<PROVIDER>_CLIENT_ID`, `AUTHKIT_<PROVIDER>_CLIENT_SECRET` and
+  `AUTHKIT_<PROVIDER>_REDIRECT` (for example `AUTHKIT_GOOGLE_CLIENT_ID`). Social login is on by
+  default; `AUTHKIT_SOCIAL_ENABLED=false` switches it off, and `AUTHKIT_SOCIAL_API_ENABLED=true`
+  adds the session-less API routes. Clear the configuration cache after changing them.
 
 ### Usage
 
+Render one button per configured provider that has a client ID set:
+
 ```blade
-{{-- resources/views/auth/login.blade.php: renders a "Continue with Google" link to /auth/social/google --}}
 <x-laranail-authkit-social-login::social-buttons />
-{{-- The package's own callback at /auth/social/google/callback signs the user in and redirects to the intended URL, else /dashboard. --}}
 ```
 
-The full walkthrough is in [Getting started](docs/getting-started.md); everything else is in the [documentation index](#documentation).
+Each button links to `/auth/social/{provider}`; the callback at `/auth/social/{provider}/callback`
+signs the user in and redirects to the intended URL, falling back to `/dashboard`
+(`AUTHKIT_SOCIAL_AFTER_LOGIN`). Signed-in users manage their linked providers on the
+package's own page (the name below is the standalone one; with `authkit-preset` installed it takes
+the preset mount's name prefix instead):
+
+```blade
+<a href="{{ route('laranail-social.user-social-accounts.index') }}">Linked accounts</a>
+```
+
+The full walkthrough is in [Getting started](docs/getting-started.md).
+
+Everything else is in the [documentation index](#documentation).
 
 ## <a name="documentation"></a>Documentation
 
