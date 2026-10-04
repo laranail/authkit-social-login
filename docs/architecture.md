@@ -35,7 +35,7 @@ the reusable Blade buttons. It can be installed independently or alongside the p
   placeholders that must not change behaviour on install. This package carries social login moved
   out of the core, so an upgrading application already has it configured — defaulting off would
   disable it during a routine `composer update` with nothing reported. The switch is
-  `authkit-social-login.enabled`; a test asserts it defaults to **true**, and a second asserts it
+  `laranail.authkit-social-login.enabled`; a test asserts it defaults to **true**, and a second asserts it
   can still be turned off.
 - **Compose, do not reimplement.** Laravel Socialite and `socialiteproviders/manager` do protocol
   work; this package owns routes, UI, identity linking, provisioning and the provider registry.

@@ -76,7 +76,7 @@ public function socials(): MorphMany
 ```
 
 The package registers the redirect, callback, and connected-account routes. Standalone route prefix,
-guard, middleware, and names are configured under `web` in `authkit-social-login`; when
+guard, middleware, and names are configured under `web` in `laranail.authkit-social-login`; when
 the preset is installed these values come from the preset's mounts. The social button component
 renders configured providers that have a client ID, and can be customized through the `ui` config.
 
@@ -136,7 +136,7 @@ unverified or already taken tells an unauthenticated caller which addresses have
 
 ## Adding a provider
 
-The accepted route values are the `SocialProvider` enum cases. Adding a provider requires a package change: add its enum case with an arm in both `assertsEmailVerified()` and `hasVerifiedEmail()`, add its credentials, redirect, and scopes under `authkit-social-login`, and ensure Socialite has a driver for that key. First-party Socialite drivers work through the normal `services.<provider>` configuration; a third-party driver must be registered with Socialite's extension mechanism, as PayPal is. Add callback tests for an existing identity, a verified email, an unverified or missing email, and authenticated linking before exposing the new provider.
+The accepted route values are the `SocialProvider` enum cases. Adding a provider requires a package change: add its enum case with an arm in both `assertsEmailVerified()` and `hasVerifiedEmail()`, add its credentials, redirect, and scopes under `laranail.authkit-social-login`, and ensure Socialite has a driver for that key. First-party Socialite drivers work through the normal `services.<provider>` configuration; a third-party driver must be registered with Socialite's extension mechanism, as PayPal is. Add callback tests for an existing identity, a verified email, an unverified or missing email, and authenticated linking before exposing the new provider.
 
 ---
 

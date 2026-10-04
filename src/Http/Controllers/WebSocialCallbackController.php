@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\AuthKit\Social\Http\Controllers;
 use Illuminate\Http\Request;
 use Simtabi\Laranail\AuthKit\Support\AuthKit;
 use Simtabi\Laranail\AuthKit\Support\AuthResult;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\AuthKit\Social\Support\SocialWebRoutes;
 
 class WebSocialCallbackController extends AbstractSocialCallbackController
@@ -27,7 +28,7 @@ class WebSocialCallbackController extends AbstractSocialCallbackController
 
         return is_string($route) && \Illuminate\Support\Facades\Route::has($route)
             ? redirect()->to(route($route))->withErrors(provider: ['email' => 'Social authentication failed.'])
-            : redirect()->to(config(key: 'authkit-social-login.web.failed_redirect', default: '/login'))
+            : redirect()->to(SocialConfig::get('web.failed_redirect', '/login'))
                 ->withErrors(provider: ['email' => 'Social authentication failed.']);
     }
 }

@@ -60,7 +60,8 @@ does not require or install this package; install it separately when social logi
 
 The installer above does all of this; these are the pieces it touches, for a manual setup:
 
-- **Publish tags** — `laranail::authkit-social-login-config` (writes `config/authkit-social-login.php`),
+- **Publish tags** — `laranail::authkit-social-login-config` (writes `config/laranail/authkit-social-login.php`, read at
+  `laranail.authkit-social-login`; a bare `config/authkit-social-login.php` is a deprecated fallback),
   `laranail::authkit-social-login-migrations` (the `socials` table) and, only if you want to own the
   route file, `laranail::authkit-social-login-routes`.
 - **Migrations** — run `php artisan migrate` after publishing; the package does not load its
@@ -102,7 +103,7 @@ Full documentation: <https://opensource.simtabi.com/documentation/laranail/authk
 - [Getting started](docs/getting-started.md) — configure providers and wire the login buttons
 - [Social login](docs/social-login.md) — providers, callbacks and identity linking
 - [Social accounts](docs/connected-accounts.md) — the linked-providers page and unlinking rules
-- [Configuration](docs/configuration.md) — every key in `authkit-social-login`
+- [Configuration](docs/configuration.md) — every key in `laranail.authkit-social-login`
 - [Architecture](docs/architecture.md) — how this package extends the core, and why it is built this way
 - [Release](docs/release.md) — versioning, tagging and what a release must carry
 

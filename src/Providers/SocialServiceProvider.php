@@ -13,6 +13,7 @@ use Simtabi\Laranail\AuthKit\Social\Contracts;
 use SocialiteProviders\Apple\AppleExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
 use Simtabi\Laranail\AuthKit\Social\Commands\InstallSocialLoginCommand;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
@@ -22,7 +23,7 @@ use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
  *
  * Everything here moved out of AuthKitServiceProvider when social login left the core. Extends the
  * core through its published seams and never edits it. Every public name is vendor-scoped: the
- * config key is authkit-social-login and publish tags are laranail::authkit-social-login-*, because
+ * config key is laranail.authkit-social-login and publish tags are laranail::authkit-social-login-*, because
  * Laravel keeps these in flat global maps where a second package claiming the same key silently
  * replaces the first.
  *
@@ -38,10 +39,14 @@ class SocialServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('laranail/authkit-social-login')
-            ->publish(
-                paths: ['config/authkit-social-login.php' => config_path(path: 'authkit-social-login.php')],
-                tag: 'laranail::authkit-social-login-config',
-            )
+            /*
+             * Merged at laranail.authkit-social-login and published to config/laranail/authkit-social-login.php
+             * under laranail::authkit-social-login-config. Until 2026-10 this was a literal
+             * mergeConfigFrom() at the bare `authkit-social-login` key, published to
+             * config/authkit-social-login.php; a config an application published there is still read,
+             * deprecated, through SocialConfig.
+             */
+            ->hasConfigFile('authkit-social-login')
             /*
              * The core published this same tag until the extraction. It drops it in the same change,
              * so exactly one package owns it -- NamingConventionTest cannot catch a duplicate,
@@ -59,8 +64,6 @@ class SocialServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->mergeConfigFrom(path: $this->packagePath('config/authkit-social-login.php'), key: 'authkit-social-login');
-
         $this->app->bind(abstract: Contracts\SocialRedirectActionInterface::class, concrete: Actions\SocialRedirectAction::class);
         $this->app->bind(abstract: Contracts\SocialCallbackActionInterface::class, concrete: Actions\SocialCallbackAction::class);
         $this->app->bind(abstract: Contracts\CreateSocialAccountActionInterface::class, concrete: Actions\CreateSocialAccountAction::class);
@@ -76,9 +79,11 @@ class SocialServiceProvider extends PackageServiceProvider
             $this->commands([InstallSocialLoginCommand::class]);
         }
 
+        SocialConfig::reportLegacyKey();
+
         // `default: true` matches the shipped config. Reading false when the key is absent would
         // disable social login for anyone who has not published the config file.
-        if (! config(key: 'authkit-social-login.enabled', default: true)) {
+        if (! SocialConfig::get('enabled', true)) {
             return;
         }
 
@@ -92,8 +97,8 @@ class SocialServiceProvider extends PackageServiceProvider
             concrete: Actions\UnlinkSocialAccount::class,
         );
 
-        if (config(key: 'authkit-social-login.web.enabled', default: true)
-            && config(key: 'authkit-social-login.web.routes_mode', default: 'package') === 'package') {
+        if (SocialConfig::get('web.enabled', true)
+            && SocialConfig::get('web.routes_mode', 'package') === 'package') {
             $this->loadRoutesFrom($this->packagePath('routes/web.php'));
         }
 
@@ -114,7 +119,7 @@ class SocialServiceProvider extends PackageServiceProvider
      */
     private function publishProviderCredentials(): void
     {
-        foreach (config(key: 'authkit-social-login', default: []) as $slug => $providerConfig) {
+        foreach (SocialConfig::get(default: []) as $slug => $providerConfig) {
             if ($slug === 'enabled' || ! is_array(value: $providerConfig)) {
                 continue;
             }

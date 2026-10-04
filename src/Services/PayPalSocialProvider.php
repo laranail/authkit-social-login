@@ -8,6 +8,7 @@ use RuntimeException;
 use GuzzleHttp\RequestOptions;
 use SocialiteProviders\Manager\OAuth2\User;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 
 class PayPalSocialProvider extends AbstractProvider
 {
@@ -41,7 +42,7 @@ class PayPalSocialProvider extends AbstractProvider
 
     protected function useSandbox(): bool
     {
-        return config(key: 'authkit-social-login.paypal.sandbox_mode', default: true);
+        return SocialConfig::get('paypal.sandbox_mode', true);
     }
 
     protected function getWebBaseUrl(): string

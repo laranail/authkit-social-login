@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Simtabi\Laranail\AuthKit\Support\AuthKit;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\AuthKit\Social\Http\Controllers\ApiSocialController;
 
 /*
@@ -24,7 +25,7 @@ use Simtabi\Laranail\AuthKit\Social\Http\Controllers\ApiSocialController;
 |
 */
 
-if (! (bool) config(key: 'authkit-social-login.api.enabled', default: false)) {
+if (! (bool) SocialConfig::get('api.enabled', false)) {
     return;
 }
 

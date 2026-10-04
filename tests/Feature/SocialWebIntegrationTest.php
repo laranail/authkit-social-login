@@ -13,9 +13,9 @@ it('registers standalone social web routes with package defaults', function (): 
 });
 
 it('renders configured providers with credentials as social buttons', function (): void {
-    config()->set('authkit-social-login.providers', ['google', 'apple']);
-    config()->set('authkit-social-login.google.client_id', 'google-client');
-    config()->set('authkit-social-login.apple.client_id', null);
+    config()->set('laranail.authkit-social-login.providers', ['google', 'apple']);
+    config()->set('laranail.authkit-social-login.google.client_id', 'google-client');
+    config()->set('laranail.authkit-social-login.apple.client_id', null);
 
     $view = $this->blade('<x-laranail-authkit-social-login::social-buttons />');
 

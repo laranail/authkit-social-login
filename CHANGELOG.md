@@ -14,10 +14,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Breaking. The social config is now published at `config/authkit-social-login.php` and read
-  under `authkit-social-login`.** Move a published `config/laranail/authkit-social-login.php` to
-  the new path; application overrides under `laranail.authkit-social-login.*` must also move to
-  `authkit-social-login.*`. Provider environment variable names are unchanged.
+- **The config is read at `laranail.authkit-social-login` again, and published to
+  `config/laranail/authkit-social-login.php`.** An interim change on `main` (never tagged) had moved
+  it to the bare `authkit-social-login` key and `config/authkit-social-login.php`, which sits in
+  Laravel's flat config map beside every other package's. The registration now goes through
+  package-tools' `hasConfigFile()`, every read goes through `Support\SocialConfig`, and
+  `ConfigKeyTest` scans `src/` and `routes/` for a bare read in both the `config('…')` and
+  `config(key: '…')` forms. A config published at the bare path is still honoured (see
+  *Deprecated*). Provider environment variable names are unchanged.
+- **`composer.json` `authors` email is `opensource@simtabi.com`**, the community metadata address,
+  replacing `hello@simtabi.com`.
 
 - **Breaking. The package is now `laranail/authkit-social-login`**, matching the repository, which
   was renamed to `laranail/authkit-social-login` while this manifest went on declaring
@@ -61,6 +67,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
   The callback accepts GET and POST and drops the CSRF middleware, because Apple forces
   `response_mode=form_post` and POSTs from its own servers with no session or token.
+
+### Deprecated
+
+- **The bare `authkit-social-login` config key**, and the `config/authkit-social-login.php` file it
+  loads from. When an application still has it, each key it sets wins over the scoped default (a
+  whole-block read shallow-merges it over the scoped block, as `mergeConfigFrom()` did), and the
+  provider emits one `E_USER_DEPRECATED` at boot naming the replacement. Republish with
+  `php artisan vendor:publish --tag=laranail::authkit-social-login-config`. The earliest release that
+  could stop reading it is the next minor after 0.1.
 
 ## [Unreleased]
 

@@ -18,7 +18,7 @@ If the application separately records that a password was explicitly chosen, it 
 of the last link:
 
 ```php
-// config/authkit-social-login.php
+// config/laranail/authkit-social-login.php
 'unlink' => ['trust_password_column' => true],
 ```
 

@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\AuthKit\Social\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 class InstallSocialLoginCommand extends Command
@@ -48,7 +49,7 @@ class InstallSocialLoginCommand extends Command
             $this->line('Set AUTHKIT_SOCIAL_ROUTES_MODE=published and load routes/laranail-authkit-social-login-web.php from the application route bootstrap.');
         }
 
-        $this->line('Review config/authkit-social-login.php and run php artisan migrate.');
+        $this->line('Review config/laranail/authkit-social-login.php and run php artisan migrate.');
 
         return self::SUCCESS;
     }
@@ -82,7 +83,15 @@ class InstallSocialLoginCommand extends Command
     /** @param array<int, string> $providers */
     private function writeProviders(array $providers): void
     {
-        $path = config_path('authkit-social-login.php');
+        // The config now publishes to config/laranail/authkit-social-login.php. An application that
+        // published before 2026-10 has the deprecated bare config/authkit-social-login.php instead, and
+        // that file is the one still being read, so it is the one to edit when the new one is absent.
+        $path = config_path('laranail/authkit-social-login.php');
+        $legacy = config_path('authkit-social-login.php');
+
+        if (! is_file($path) && is_file($legacy)) {
+            $path = $legacy;
+        }
 
         if (! is_file($path) || $providers === []) {
             return;
@@ -113,7 +122,7 @@ class InstallSocialLoginCommand extends Command
     /** @param array<int, string> $providers */
     private function writeEnvironment(array $providers): void
     {
-        $prefix = (string) config(key: 'authkit-social-login.web.prefix', default: 'auth');
+        $prefix = (string) SocialConfig::get('web.prefix', 'auth');
 
         if (class_exists(\Simtabi\Laranail\AuthKit\Preset\Support\AuthPreset::class)) {
             $mounts = \Simtabi\Laranail\AuthKit\Preset\Support\AuthPreset::mounts();
