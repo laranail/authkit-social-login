@@ -12,12 +12,12 @@ final class SocialProviders
     /** @return array<int, array{slug: string, label: string, icon: string, class: string, order: int}> */
     public static function buttons(): array
     {
-        if (! config(key: 'authkit-social-login.enabled', default: true)
-            || ! config(key: 'authkit-social-login.web.enabled', default: true)) {
+        if (! SocialConfig::get('enabled', true)
+            || ! SocialConfig::get('web.enabled', true)) {
             return [];
         }
 
-        $configured = config(key: 'authkit-social-login.providers', default: []);
+        $configured = SocialConfig::get('providers', []);
 
         if (! is_array($configured)) {
             return [];
@@ -33,11 +33,11 @@ final class SocialProviders
 
             $provider = SocialProvider::tryFrom($slug) ?? $registry->get($slug);
 
-            if ($provider === null || ! config(key: "authkit-social-login.{$slug}.client_id")) {
+            if ($provider === null || ! SocialConfig::get("{$slug}.client_id")) {
                 continue;
             }
 
-            $ui = config(key: "authkit-social-login.ui.{$slug}", default: []);
+            $ui = SocialConfig::get("ui.{$slug}", []);
             $ui = is_array($ui) ? $ui : [];
 
             $descriptors[] = [

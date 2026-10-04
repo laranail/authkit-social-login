@@ -2,7 +2,7 @@
 
 Install the package, configure Google, render the buttons, and follow one sign-in from the redirect to the session.
 
-The package is enabled as soon as it is installed: `authkit-social-login.enabled` defaults to `true`
+The package is enabled as soon as it is installed: `laranail.authkit-social-login.enabled` defaults to `true`
 (`AUTHKIT_SOCIAL_ENABLED`), and it registers its own web routes, callback controllers, linked-accounts
 page and Blade button component. Set `AUTHKIT_SOCIAL_ENABLED=false` to switch it off.
 
@@ -16,7 +16,7 @@ php artisan laranail::authkit-social-login.install --social=google
 php artisan migrate
 ```
 
-The installer publishes `config/authkit-social-login.php` (tag `laranail::authkit-social-login-config`),
+The installer publishes `config/laranail/authkit-social-login.php` (tag `laranail::authkit-social-login-config`),
 writes `'providers' => ['google']` into it, publishes the `socials` migration (tag
 `laranail::authkit-social-login-migrations`) unless one is already present, and appends any missing
 `AUTHKIT_GOOGLE_*` variables to `.env` and `.env.example` when those files exist. `--social` accepts

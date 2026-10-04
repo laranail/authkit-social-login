@@ -36,7 +36,7 @@ abstract class TestCase extends BaseTestCase
         // Social sign-in over the API is off by default, and the routes file reads that flag when
         // it loads -- before any test body runs. Enabled here so the endpoints exist to be tested;
         // the default itself is asserted against the shipped config.
-        $app['config']->set('authkit-social-login.api.enabled', true);
+        $app['config']->set('laranail.authkit-social-login.api.enabled', true);
 
         $app['config']->set('app.key', 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=');
         $app['config']->set('database.default', 'testing');

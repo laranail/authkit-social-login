@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\AuthKit\Contracts\SocialIdentityProviderInterface;
 
 /**
@@ -54,7 +55,7 @@ class SocialAccountService
         // Opt-in, and off by default. An application that records whether a password was actually
         // chosen -- rather than generated during social provisioning -- can answer the question this
         // package cannot, and set this to true.
-        return (bool) config(key: 'authkit-social-login.unlink.trust_password_column', default: false)
+        return (bool) SocialConfig::get('unlink.trust_password_column', false)
             && $this->hasPassword($user);
     }
 

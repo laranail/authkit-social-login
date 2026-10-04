@@ -48,8 +48,13 @@ The service provider is discovered automatically.
 php artisan vendor:publish --tag=laranail::authkit-social-login-config
 ```
 
-That writes `config/authkit-social-login.php`, which Laravel loads under the `authkit-social-login`
-key.
+That writes `config/laranail/authkit-social-login.php`, which the package reads under the
+`laranail.authkit-social-login` key.
+
+> A config published before 2026-10 sits at `config/authkit-social-login.php`, under the bare
+> `authkit-social-login` key. It is still read, as a deprecated fallback: each key it sets wins over
+> the packaged default, and the package emits a deprecation at boot. Republish with the command above
+> and delete the old file; the bare key stops being read in the next minor after 0.1.
 
 ## Configure providers
 

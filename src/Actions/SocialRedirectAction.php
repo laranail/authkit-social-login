@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\AuthKit\Social\Actions;
 
 use Illuminate\Http\Request;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
 use Simtabi\Laranail\AuthKit\Social\Support\SocialRedirectResult;
 use Simtabi\Laranail\AuthKit\Social\Support\ResolvesIdentityProvider;
@@ -27,7 +28,7 @@ class SocialRedirectAction implements SocialRedirectActionInterface
         // Scopes and optional parameters were configurable and ignored: nothing read them, so the
         // only scopes in effect were the driver's defaults. `with` is what carries Google's `hd`
         // domain restriction and `prompt=select_account`, neither of which was reachable before.
-        $settings = config(key: "authkit-social-login.{$provider->slug()}", default: []);
+        $settings = SocialConfig::get("{$provider->slug()}", []);
 
         if (is_array($settings)) {
             if (! empty($settings['scopes']) && is_array($settings['scopes']) && method_exists($driver, 'scopes')) {
