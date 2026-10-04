@@ -18,9 +18,21 @@ this package:
     { "type": "vcs", "url": "https://github.com/laranail/authkit.git" },
     { "type": "vcs", "url": "https://github.com/laranail/console.git" },
     { "type": "vcs", "url": "https://github.com/laranail/enumerator.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" }
+    { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" },
+    { "type": "composer", "url": "https://repo.packagist.org", "exclude": ["laranail/*"] },
+    { "packagist.org": false }
 ]
 ```
+
+The four `vcs` entries are the full `laranail/*` closure of this package's `require` block: it
+requires `authkit`, `console`, `enumerator` and `package-tools` directly, and `authkit` requires
+only `package-tools`, which requires no other `laranail/*` package. The last two lines replace the
+default Packagist repository with one that excludes `laranail/*`, so a stale Packagist copy under
+the same name can never win over the git source. Every other dependency, Socialite included, still
+resolves from Packagist.
+
+If your application already declares a repositories block, merge these entries into it rather than
+adding a second one, and keep a single `{ "packagist.org": false }`.
 
 ## Require it
 
