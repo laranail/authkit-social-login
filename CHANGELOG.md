@@ -244,3 +244,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - CI actions pinned to commit SHAs, per the org standard. The four existing authkit siblings still
   float on `@v5` — a separate cleanup.
+
+[Unreleased]: https://github.com/laranail/authkit-social-login/compare/v0.1.0...HEAD
