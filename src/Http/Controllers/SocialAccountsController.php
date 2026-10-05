@@ -8,8 +8,8 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
-use Simtabi\Laranail\AuthKit\Social\Services\SocialAccountService;
 use Simtabi\Laranail\AuthKit\Social\Support\SocialProviders;
+use Simtabi\Laranail\AuthKit\Social\Services\SocialAccountService;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 use Simtabi\Laranail\AuthKit\Social\Contracts\UnlinkSocialAccountInterface;
 
@@ -29,12 +29,12 @@ class SocialAccountsController
         $linkedSlugs = $linkedAccounts->pluck('slug')->all();
 
         return view('laranail/authkit-social-login::social-accounts', [
-            'accounts' => $linkedAccounts,
+            'accounts'           => $linkedAccounts,
             'supportedProviders' => collect(SocialProviders::buttons())
                 ->map(fn (array $provider): array => [
-                    'slug' => $provider['slug'],
-                    'label' => $provider['label'],
-                    'icon' => $provider['icon'],
+                    'slug'      => $provider['slug'],
+                    'label'     => $provider['label'],
+                    'icon'      => $provider['icon'],
                     'connected' => in_array($provider['slug'], $linkedSlugs, true),
                 ])
                 ->values(),

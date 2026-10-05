@@ -83,14 +83,6 @@
             "url": "https://github.com/laranail/package-tools.git"
         },
         {
-            "type": "vcs",
-            "url": "https://github.com/laranail/captcha.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/laranail/db-tools.git"
-        },
-        {
             "type": "composer",
             "url": "https://repo.packagist.org",
             "exclude": [
