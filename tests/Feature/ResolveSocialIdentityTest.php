@@ -6,6 +6,7 @@ use Workbench\App\Models\User;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Simtabi\Laranail\AuthKit\Social\Actions\ResolveSocialIdentity;
 
 function socialiteUser(array $overrides = []): SocialiteUser
@@ -58,8 +59,8 @@ it('returns existing socialable when social record matches', function (): void {
         'provider_id'     => '123456789',
         'name'            => 'John Doe',
         'email'           => 'john@example.com',
-        'token'           => 'old-token',
-        'refresh_token'   => 'old-refresh',
+        'token'           => TestCredentials::secret('stale'),
+        'refresh_token'   => TestCredentials::secret('refresh'),
     ]);
 
     $user = app(ResolveSocialIdentity::class)->execute(
@@ -80,8 +81,8 @@ it('updates tokens on existing social record', function (): void {
         'provider_id'     => '123456789',
         'name'            => 'John Doe',
         'email'           => 'john@example.com',
-        'token'           => 'old-token',
-        'refresh_token'   => 'old-refresh',
+        'token'           => TestCredentials::secret('stale'),
+        'refresh_token'   => TestCredentials::secret('refresh'),
     ]);
 
     app(ResolveSocialIdentity::class)->execute(
@@ -91,7 +92,7 @@ it('updates tokens on existing social record', function (): void {
     );
 
     $social = Social::first();
-    expect($social->token)->not->toBe('old-token');
+    expect($social->token)->not->toBe(TestCredentials::secret('stale'));
 });
 
 it('auto-links by email only when provider asserts email is verified', function (): void {

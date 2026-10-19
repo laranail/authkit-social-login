@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Laravel\Socialite\Facades\Socialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Simtabi\Laranail\AuthKit\Support\IdentityProvider;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Simtabi\Laranail\AuthKit\Social\Services\PayPalSocialProvider;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 
@@ -21,7 +22,7 @@ it('binds the Socialite driver of a provider that supplies one', function (): vo
 
     config()->set('services.acme', [
         'client_id'     => 'id',
-        'client_secret' => 'secret',
+        'client_secret' => TestCredentials::secret('acme'),
         'redirect'      => 'https://example.test/cb',
     ]);
 
@@ -45,7 +46,7 @@ it('binds under the provider’s driver key, not its slug', function (): void {
 
     config()->set('services.acme-oidc', [
         'client_id'     => 'id',
-        'client_secret' => 'secret',
+        'client_secret' => TestCredentials::secret('acme'),
         'redirect'      => 'https://example.test/cb',
     ]);
 
