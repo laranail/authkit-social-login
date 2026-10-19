@@ -9,6 +9,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Simtabi\Laranail\AuthKit\Social\Actions\SocialCallbackAction;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -63,8 +64,8 @@ it('returns existing user when social account already exists', function (): void
         'provider_id'     => '123456789',
         'name'            => 'John Doe',
         'email'           => 'john@example.com',
-        'token'           => 'old-token',
-        'refresh_token'   => 'old-refresh',
+        'token'           => TestCredentials::secret('stale'),
+        'refresh_token'   => TestCredentials::secret('refresh'),
     ]);
 
     $result = app(SocialCallbackAction::class)->execute(

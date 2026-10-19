@@ -7,6 +7,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\LinkedInOpenIdProvider;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 
 /**
  * Asserts what Socialite actually hands back for each shipped provider.
@@ -23,7 +24,7 @@ beforeEach(function (): void {
     foreach (SocialProvider::cases() as $provider) {
         config()->set("services.{$provider->driver()}", [
             'client_id'     => 'test-id',
-            'client_secret' => 'test-secret',
+            'client_secret' => TestCredentials::secret('client'),
             'redirect'      => 'https://example.test/callback',
         ]);
     }
