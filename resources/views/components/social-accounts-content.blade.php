@@ -6,6 +6,12 @@
                 <p class="mt-2 text-sm text-gray-600">Review the social providers available for sign-in and the accounts linked to your profile.</p>
             </header>
 
+            @if (session('status') === 'social-account-connected')
+                <div role="status" class="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                    The account was connected.
+                </div>
+            @endif
+
             @if (session('status') === 'social-account-unlinked')
                 <div role="status" class="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
                     The account was disconnected.
@@ -38,7 +44,12 @@
                                 @if ($provider['connected'])
                                     <span class="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">Connected</span>
                                 @else
-                                    <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">Not connected</span>
+                                    {{-- Connecting is its own endpoint behind `auth`, never the guest sign-in route: reaching
+                                         it is how intent is declared. It asks for a confirmed password before redirecting. --}}
+                                    <a href="{{ route(\Simtabi\Laranail\AuthKit\Social\Support\SocialWebRoutes::currentMount()['name'] . 'social.connect', ['provider' => $provider['slug']]) }}"
+                                       class="inline-flex items-center justify-center rounded-md border border-indigo-200 px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                        Connect
+                                    </a>
                                 @endif
                             </li>
                         @endforeach

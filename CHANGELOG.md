@@ -7,6 +7,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **An explicit connect flow for enabled providers.** `…social.connect` and
+  `…social.connect.callback` sit behind `auth`, so connecting is declared by the endpoint reached
+  rather than inferred from being signed in on the guest sign-in pair. Starting an attempt requires
+  a recently confirmed credential; the attempt is single-use and bound to the initiating user,
+  guard, provider and authentication context; an identity owned by another account is refused and
+  never transferred; an identity this user already owns returns unchanged. Nothing in the flow
+  signs anyone in or reads an email address — those rules are AuthKit's `IdentityLinkingInterface`,
+  which has nowhere to put an address. A **Connect** action now appears on the Social Accounts page
+  for every configured provider that is not yet linked, and a token-authenticated client carries
+  the attempt back as `link_token`. See `docs/social-login.md`. Closes
+  [#12](https://github.com/laranail/authkit-social-login/issues/12).
+
+### Changed
+
+- Requires `laranail/authkit ^0.1.1`, the first release carrying `IdentityLinkingInterface`.
+
 ### Security
 
 - **A provider callback no longer switches the signed-in account.** When an identity already

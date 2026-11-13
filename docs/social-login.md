@@ -108,8 +108,34 @@ signing in with it, and it goes through AuthKit's `IdentityLinkingInterface`: a 
 credential, and a single-use attempt bound to the user, guard, provider and authentication context
 that began it. See AuthKit's [identity linking](https://github.com/laranail/authkit/blob/main/docs/identity-linking.md).
 
-Until this package ships that flow, there is no in-package way to connect a provider to an existing
-account, and the callback refuses to do it implicitly.
+That flow now ships here, as its own pair of routes behind `auth`:
+
+| Route | Name | What it does |
+|---|---|---|
+| `GET /{prefix}/social/{provider}/connect` | `…social.connect` | Refuses without a recently confirmed credential, issues a single-use attempt, redirects to the provider |
+| `GET\|POST /{prefix}/social/{provider}/connect/callback` | `…social.connect.callback` | Spends the attempt, refuses an identity owned by another account, writes the link |
+
+Intent is declared by reaching those endpoints. It is never inferred from being signed in while
+reaching the guest sign-in pair, which is the distinction the old behaviour collapsed. The Social
+Accounts page offers a **Connect** button for every configured provider that is not yet linked.
+
+The connect callback is a **different endpoint** from the sign-in callback, so it is a different
+`redirect_uri`. The package pins it on both legs — the provider records it on the authorize call
+and checks it again on the token exchange — so you do not add a second redirect URI to your
+provider configuration beyond this one.
+
+Neither leg signs anybody in, and neither reads an email address. Refusals come back as a
+validation error on the accounts page, carrying a reason from AuthKit's closed
+`IdentityLinkFailure` enum rather than a message.
+
+Put Laravel's `password.confirm` middleware on the connect route if you would rather an
+unconfirmed user be sent to the confirmation page than shown the refusal; the service enforces the
+same requirement either way, which is what covers token clients that have no session to redirect.
+
+### Token-authenticated clients
+
+A client with no session gets the attempt token back from the start call and hands it in on the
+callback as `link_token`, because there is no session to park it in. Everything else is identical.
 
 `linking.implicit_on_callback` restores the old behaviour for an application that depends on it
 while it migrates. It is **off by default and deprecated**:
