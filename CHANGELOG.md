@@ -7,6 +7,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-13
+
 ### Added
 
 - **An explicit connect flow for enabled providers.** `…social.connect` and
@@ -293,4 +295,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   requests it via the `users.email` scope and `user.fields` — so every X login was treated as
   unverified. It is now trusted through its own claim.
 
-[Unreleased]: https://github.com/laranail/authkit-social-login/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/laranail/authkit-social-login/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/laranail/authkit-social-login/compare/v0.1.0...v0.1.1
