@@ -202,7 +202,11 @@ it('normalizes and verifies email addresses trusted from a provider', function (
         ->and($user->email_verified_at)->not->toBeNull();
 });
 
-it('links social account to authenticated user', function (): void {
+it('links social account to authenticated user, with the deprecated opt-in enabled', function (): void {
+    // Implicit linking on a callback is off by default now -- being signed in is not consent.
+    // See CallbackNeverSwitchesAccountsTest for the default, and the deliberate flow it points at.
+    config()->set(Simtabi\Laranail\AuthKit\Social\Support\SocialConfig::KEY . '.linking.implicit_on_callback', true);
+
     $authUser = User::factory()->create();
     $this->actingAs($authUser);
 

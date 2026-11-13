@@ -55,6 +55,13 @@ requirements.
 file to override settings. Laravel's config merge is shallow, so replace nested arrays such as
 `web` or `ui` as a whole when customizing them.
 
+## Linking
+
+`linking.implicit_on_callback` (`AUTHKIT_SOCIAL_IMPLICIT_LINKING`) decides whether finishing a
+provider callback may attach an unlinked identity to whoever is signed in. It is **false**, and
+deprecated: connecting a provider deliberately goes through AuthKit's identity linking. See
+[Social login](social-login.md#connecting-a-provider-deliberately).
+
 ---
 
 [← Docs index](../README.md#documentation)
