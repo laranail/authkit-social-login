@@ -77,6 +77,29 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Linking
+    |--------------------------------------------------------------------------
+    |
+    | Whether finishing a provider callback may attach an unlinked identity to
+    | whoever happens to be signed in at that moment.
+    |
+    | Off, because being signed in is not consent: an unattended session, or a
+    | callback a user was walked into, would add a permanent new way into the
+    | account that its owner never chose. Connecting a provider deliberately is
+    | AuthKit's IdentityLinkingInterface, which requires a recently confirmed
+    | credential and a single-use attempt bound to the user who started it.
+    |
+    | Turn it on only to keep an existing integration working while it moves to
+    | that flow. It is deprecated and will be removed.
+    |
+    */
+
+    'linking' => [
+        'implicit_on_callback' => (bool) env(key: 'AUTHKIT_SOCIAL_IMPLICIT_LINKING', default: false),
+    ],
+
     'unlink' => [
         'trust_password_column' => (bool) env(key: 'AUTHKIT_SOCIAL_UNLINK_TRUSTS_PASSWORD', default: false),
     ],

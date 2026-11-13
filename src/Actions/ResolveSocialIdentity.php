@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Simtabi\Laranail\AuthKit\Support\UserModelResolver;
+use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\AuthKit\Contracts\SocialIdentityProviderInterface;
 use Simtabi\Laranail\AuthKit\Social\Contracts\ResolveSocialIdentityInterface;
 use Simtabi\Laranail\AuthKit\Social\Contracts\CreateSocialAccountActionInterface;
@@ -29,7 +30,24 @@ class ResolveSocialIdentity implements ResolveSocialIdentityInterface
             ->where('provider_id', $socialUser->getId())
             ->first();
 
+        // Read the signed-in user through the guard this callback is for. `auth()->user()`
+        // answers for the default guard, which on an application using any other one is null --
+        // and a null here would read as "nobody is signed in", which is exactly the branch the
+        // check below exists to avoid taking.
+        $current = auth()->guard($guard)->user();
+
         if ($social !== null) {
+            $owner = $social->socialable;
+
+            // Returning the owner signs them in, so it is only ever right when nobody is signed
+            // in already. Someone finishing this flow while authenticated as a different account
+            // is refused: the identity is not transferred, and the session is not switched to its
+            // owner. Without this, completing a provider callback with somebody else's identity
+            // replaced the current session with theirs.
+            if ($current !== null && ! $this->isSameAccount($current, $owner)) {
+                return null;
+            }
+
             $social->update([
                 'token'         => $socialUser->token,
                 'refresh_token' => $socialUser->refreshToken,
@@ -38,19 +56,26 @@ class ResolveSocialIdentity implements ResolveSocialIdentityInterface
                     : null,
             ]);
 
-            return $social->socialable;
+            return $owner;
         }
 
         $userModel = UserModelResolver::resolve(guard: $guard);
 
-        if (auth()->check()) {
+        if ($current !== null) {
+            // Being signed in is not consent to add a sign-in method. Deliberate connecting is
+            // AuthKit's IdentityLinkingInterface, which asks for a recently confirmed credential
+            // and a single-use attempt bound to the user who began it.
+            if (! SocialConfig::get('linking.implicit_on_callback', false)) {
+                return null;
+            }
+
             $this->createSocialAccount->execute(
-                authenticatable: auth()->user(),
+                authenticatable: $current,
                 provider: $provider,
                 socialUser: $socialUser,
             );
 
-            return auth()->user();
+            return $current;
         }
 
         $email = $this->normalizedVerifiedEmail($provider, $socialUser);
@@ -101,6 +126,19 @@ class ResolveSocialIdentity implements ResolveSocialIdentityInterface
             : [];
 
         return is_array($rawUser) && $provider->hasVerifiedEmail($rawUser);
+    }
+
+    /**
+     * Same account, compared on both the model class and the key.
+     *
+     * The key alone is not enough: `socialable` is a morph, so id 1 of one model and id 1 of
+     * another are different accounts that would otherwise compare equal.
+     */
+    private function isSameAccount(Authenticatable $user, ?Authenticatable $other): bool
+    {
+        return $other !== null
+            && $user::class === $other::class
+            && hash_equals((string) $user->getAuthIdentifier(), (string) $other->getAuthIdentifier());
     }
 
     private function findUserByEmail(string $userModel, ?string $email): ?Authenticatable
