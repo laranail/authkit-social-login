@@ -107,7 +107,16 @@ final class SocialWebRoutes
                     ->name('social.callback');
             });
 
-            Route::prefix($prefix)->middleware([...$middleware, 'auth:' . $guard])->group(function (): void {
+            Route::prefix($prefix)->middleware([...$middleware, 'auth:' . $guard])->group(function () use ($csrfMiddleware): void {
+                // Connecting is declared by reaching these endpoints, which sit behind `auth`,
+                // rather than inferred from being signed in while reaching the guest sign-in pair.
+                Route::get('/social/{provider}/connect', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\WebSocialConnectController::class, 'start'])
+                    ->name('social.connect');
+
+                Route::match(['GET', 'POST'], '/social/{provider}/connect/callback', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\WebSocialConnectController::class, 'callback'])
+                    ->withoutMiddleware($csrfMiddleware)
+                    ->name('social.connect.callback');
+
                 Route::get('/user/social-accounts', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\SocialAccountsController::class, 'index'])
                     ->name('user-social-accounts.index');
 

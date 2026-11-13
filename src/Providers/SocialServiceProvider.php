@@ -67,6 +67,7 @@ class SocialServiceProvider extends PackageServiceProvider
         $this->app->bind(abstract: Contracts\SocialRedirectActionInterface::class, concrete: Actions\SocialRedirectAction::class);
         $this->app->bind(abstract: Contracts\SocialCallbackActionInterface::class, concrete: Actions\SocialCallbackAction::class);
         $this->app->bind(abstract: Contracts\CreateSocialAccountActionInterface::class, concrete: Actions\CreateSocialAccountAction::class);
+        $this->app->bind(abstract: Contracts\ConnectSocialAccountInterface::class, concrete: Actions\ConnectSocialAccount::class);
         $this->app->bind(abstract: Contracts\ResolveSocialIdentityInterface::class, concrete: Actions\ResolveSocialIdentity::class);
     }
 
