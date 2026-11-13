@@ -88,13 +88,42 @@ both GET and POST and bypasses CSRF validation for OAuth provider callbacks.
 
 `ResolveSocialIdentity` uses the following order:
 
-1. An existing provider/provider-ID record is reused and its token metadata is refreshed.
-2. If a user is already authenticated, the provider identity is linked to that user.
+1. An existing provider/provider-ID record signs its owner in — **but only when nobody is already
+   signed in**. Finishing a callback while authenticated as a different account is refused: the
+   session is never switched to the identity's owner, and the identity is never transferred.
+   Its token metadata is refreshed only on an accepted callback.
+2. An unlinked identity is **not** attached to whoever happens to be signed in. Being signed in is
+   not consent to add a permanent new way into an account — see
+   [Connecting a provider deliberately](#connecting-a-provider-deliberately) below.
 3. For a guest, a matching local email is linked only when the provider asserted it verified that address.
 4. A guest with a trusted verified email and no local account gets a new local account, marked verified, plus a social record.
 5. A missing email, an unverified email, or an existing matching account without a verification claim fails the callback; it never silently links the account. An unrecognised provider slug returns a 404.
 
 Trust is declared per provider on the `SocialProvider` enum: `assertsEmailVerified()` says whether a provider asserts verification at all, and `hasVerifiedEmail()` reads that provider's own claim out of the raw payload. Both matches are exhaustive, so adding a case forces an explicit decision rather than inheriting one. This is what keeps a provider's email claim from becoming an account-takeover path.
+
+## Connecting a provider deliberately
+
+Adding a sign-in method to an account you are already signed into is a different decision from
+signing in with it, and it goes through AuthKit's `IdentityLinkingInterface`: a recently confirmed
+credential, and a single-use attempt bound to the user, guard, provider and authentication context
+that began it. See AuthKit's [identity linking](https://github.com/laranail/authkit/blob/main/docs/identity-linking.md).
+
+Until this package ships that flow, there is no in-package way to connect a provider to an existing
+account, and the callback refuses to do it implicitly.
+
+`linking.implicit_on_callback` restores the old behaviour for an application that depends on it
+while it migrates. It is **off by default and deprecated**:
+
+```php
+// config/laranail/authkit-social-login.php
+'linking' => [
+    'implicit_on_callback' => false,
+],
+```
+
+Turning it on means any completed callback attaches that identity to the current session, with no
+confirmation and nothing binding the callback to the request that started it. The switch exists so
+nobody loses a working integration overnight, not because the behaviour is safe.
 
 ## Social sign-in without a session
 

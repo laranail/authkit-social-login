@@ -7,6 +7,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Security
+
+- **A provider callback no longer switches the signed-in account.** When an identity already
+  belonged to another user, `ResolveSocialIdentity` matched it first and returned that owner, and
+  the callback controller then signed them in — so completing a provider flow while authenticated
+  as one account could replace the session with another. The callback is now refused in that case:
+  the session is not switched and the identity is not transferred. The signed-in user is also read
+  through the guard the callback is for rather than the default guard, which answered null — and so
+  looked like "nobody is signed in" — on any application not using the default.
+- **An unlinked identity is no longer attached to whoever happens to be signed in.** The callback
+  linked on `auth()->check()` alone, with no connect intent, no recent reauthentication and nothing
+  binding the callback to the request that began it, so an unattended session was enough to add a
+  permanent new way into an account. Connecting a provider deliberately goes through AuthKit's
+  `IdentityLinkingInterface` ([authkit#64](https://github.com/laranail/authkit/pull/77)).
+
+### Changed
+
+- **`linking.implicit_on_callback`, off by default.** The previous implicit-linking behaviour is
+  preserved behind this flag so an application depending on it keeps working while it migrates, and
+  is deprecated. See `docs/social-login.md`.
+
 ### Added
 
 - **Social Accounts management page** listing supported providers and showing which accounts are linked. It uses the authkit-preset dashboard when that package is installed and remains usable without preset components otherwise.
