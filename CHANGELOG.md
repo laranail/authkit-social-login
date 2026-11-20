@@ -7,6 +7,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- CI runs sequential tests on PHP 8.5 against MySQL, MariaDB, and PostgreSQL alongside SQLite.
+  Database jobs disable coverage, and the test harness registers migrations consistently across drivers.
+
 ## [0.1.1] - 2026-11-13
 
 ### Added
