@@ -80,6 +80,8 @@ it('exposes Enumerator labels and collection helpers without changing provider v
         'x',
         'linkedin',
         'paypal',
+        'github',
+        'facebook',
     ])
         ->and(SocialProvider::labels())->toBe([
             'google'   => 'Google',
@@ -87,6 +89,8 @@ it('exposes Enumerator labels and collection helpers without changing provider v
             'x'        => 'X',
             'linkedin' => 'LinkedIn',
             'paypal'   => 'PayPal',
+            'github'   => 'GitHub',
+            'facebook' => 'Facebook',
         ])
         ->and(SocialProvider::collect()->flatValues())->toBe(SocialProvider::values())
         ->and(SocialProvider::GOOGLE->label())->toBe('Google');
@@ -98,7 +102,7 @@ it('validates social provider values with Enumerator', function (): void {
         rules: ['provider' => [new EnumValue(SocialProvider::class)]],
     )->passes())->toBeTrue()
         ->and(Validator::make(
-            data: ['provider' => 'github'],
+            data: ['provider' => 'myspace'],
             rules: ['provider' => [new EnumValue(SocialProvider::class)]],
         )->fails())->toBeTrue();
 });

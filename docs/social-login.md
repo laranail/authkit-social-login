@@ -16,17 +16,19 @@ also be installed and used on its own.
 | X        | `x`         | `https://your-app.test/auth/social/x/callback`       | `AUTHKIT_X_`               | `confirmed_email`  |
 | LinkedIn | `linkedin`  | `https://your-app.test/auth/social/linkedin/callback`| `AUTHKIT_LINKEDIN_`        | `email_verified`   |
 | PayPal   | `paypal`    | `https://your-app.test/auth/social/paypal/callback`  | `AUTHKIT_PAYPAL_`          | `email_verified`   |
+| GitHub | `github` | `https://your-app.test/auth/social/github/callback` | `AUTHKIT_GITHUB_` | Verified primary email from `/user/emails` |
+| Facebook | `facebook` | `https://your-app.test/auth/social/facebook/callback` | `AUTHKIT_FACEBOOK_` | None; explicit linking only |
 
-Every shipped provider asserts that it verified the address it returns, so all five can
-auto-link. They do it with different claims: the OpenID-style three return a boolean
-`email_verified`, while X returns the confirmed address itself as `confirmed_email` and
-omits the field when the address is unconfirmed. Each provider reads its own claim, so a
-payload carrying the wrong key never counts as verification.
+Google, Apple, LinkedIn, and PayPal use `email_verified`; X uses `confirmed_email`.
+GitHub uses Socialite's verified primary email selection from `/user/emails` with the
+`user:email` scope, exposed as an internal `email_verified` claim by the package adapter.
+An absent or unverified primary email cannot create or email-match an account.
+[GitHub documents the email endpoint and scope](https://docs.github.com/en/rest/users/emails#list-email-addresses-for-the-authenticated-user).
 
-Facebook is deliberately absent. It returns no verification flag at all — only an
-inference from its documentation — and an address that cannot be shown to be verified must
-never link, because anyone able to register an account carrying someone else's address
-would otherwise take over that account.
+Facebook supports explicit linking and subsequent login by provider ID. Its returned email and
+account-level `verified` field are never used to auto-link or provision users. Register or sign in
+through an existing method, confirm your password, then connect Facebook from the social-account
+page. Later Facebook sign-ins work even if Facebook omits the email address.
 
 Create an OAuth application in the provider's developer console, add the exact callback URL used by your application, then set its credentials. Google, LinkedIn, and PayPal request OpenID, profile, and email scopes.
 
@@ -48,7 +50,38 @@ AUTHKIT_GOOGLE_CLIENT_SECRET=
 AUTHKIT_GOOGLE_REDIRECT="${APP_URL}/auth/social/google/callback"
 ```
 
-Replace `GOOGLE` with `APPLE`, `X`, `LINKEDIN`, or `PAYPAL` for the other providers. PayPal is sandboxed by default; set `AUTHKIT_PAYPAL_SANDBOX_MODE=false` only when both the callback and credentials are production values. Clear Laravel's configuration cache after changing environment values.
+Replace `GOOGLE` with `APPLE`, `X`, `LINKEDIN`, `PAYPAL`, `GITHUB`, or `FACEBOOK` for the other providers. PayPal is sandboxed by default; set `AUTHKIT_PAYPAL_SANDBOX_MODE=false` only when both the callback and credentials are production values. Clear Laravel's configuration cache after changing environment values.
+
+### GitHub and Facebook setup
+
+```sh
+php artisan laranail::authkit-social-login.install --social=github --social=facebook --no-interaction
+```
+
+Fill in `AUTHKIT_GITHUB_CLIENT_ID`, `AUTHKIT_GITHUB_CLIENT_SECRET`, and `AUTHKIT_GITHUB_REDIRECT`,
+and the corresponding `AUTHKIT_FACEBOOK_*` variables. Keep GitHub's `user:email` scope and
+Facebook's `email` scope in the published config. The installer selects both providers and adds
+missing environment placeholders; it does not create apps at either provider.
+
+Register the login callback and the separate connect callback with each provider:
+
+| Provider | Login callback | Connect callback |
+| --- | --- | --- |
+| GitHub | `/auth/social/github/callback` | `/auth/social/github/connect/callback` |
+| Facebook | `/auth/social/facebook/callback` | `/auth/social/facebook/connect/callback` |
+
+Use absolute HTTPS URLs for your deployment and adjust the prefix for custom mounts. GitHub's
+OAuth app callback settings must allow both URLs; see its
+[redirect URL rules](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#redirect-urls).
+In Meta's app dashboard, configure Facebook Login, the email permission, and both valid OAuth
+redirect URIs. App mode and provider approval determine who can use the app. For API clients,
+configure the login redirect URI to a location the client can receive and keep it identical
+through the code exchange.
+
+Facebook login requires a previously linked identity. Unlinked identities receive the same
+generic sign-in failure as other rejected social logins. Cancelled authorization, rejected codes,
+and invalid state cannot sign a user in or create a link. Facebook Limited Login token exchange
+is outside this package's authorization-code API.
 
 ## Routes, controllers, and persistence
 

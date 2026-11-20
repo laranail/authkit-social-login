@@ -112,6 +112,7 @@ class SocialServiceProvider extends PackageServiceProvider
         $this->loadRoutesFrom($this->packagePath('routes/api.php'));
 
         $this->publishProviderCredentials();
+        $this->registerGitHubProvider();
         $this->registerPayPalProvider();
         $this->registerAppleProvider();
         $this->registerContributedProviders();
@@ -139,6 +140,19 @@ class SocialServiceProvider extends PackageServiceProvider
 
             config()->set(key: "services.{$driver}", value: $providerConfig);
         }
+    }
+
+    private function registerGitHubProvider(): void
+    {
+        Event::listen(
+            events: SocialiteWasCalled::class,
+            listener: function (SocialiteWasCalled $event): void {
+                $event->extendSocialite(
+                    providerName: 'github',
+                    providerClass: Services\GitHubSocialProvider::class,
+                );
+            },
+        );
     }
 
     private function registerPayPalProvider(): void

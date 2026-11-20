@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\AuthKit\Social\Actions;
 
 use Illuminate\Http\Request;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Two\InvalidStateException;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
 use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
@@ -90,7 +93,17 @@ class ConnectSocialAccount implements ConnectSocialAccountInterface
             $driver = $driver->stateless();
         }
 
-        $socialUser = $driver->user();
+        try {
+            $socialUser = $driver->user();
+        } catch (InvalidStateException|ClientException) {
+            throw ValidationException::withMessages(['provider' => __('laranail/authkit-social-login::messages.authentication_failed')]);
+        }
+
+        $providerId = $socialUser->getId();
+
+        if ((! is_string($providerId) && ! is_int($providerId)) || trim((string) $providerId) === '') {
+            throw ValidationException::withMessages(['provider' => __('laranail/authkit-social-login::messages.authentication_failed')]);
+        }
 
         $existing = Social::query()
             ->where('provider', $provider->slug())

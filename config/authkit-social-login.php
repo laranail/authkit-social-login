@@ -190,4 +190,20 @@ return [
         'scopes'        => ['openid', 'profile', 'email'],
     ],
 
+    // GitHub's /user/emails endpoint identifies the verified primary email.
+    'github' => [
+        'client_id'     => env(key: 'AUTHKIT_GITHUB_CLIENT_ID'),
+        'client_secret' => env(key: 'AUTHKIT_GITHUB_CLIENT_SECRET'),
+        'redirect'      => env(key: 'AUTHKIT_GITHUB_REDIRECT'),
+        'scopes'        => ['user:email'],
+    ],
+
+    // Facebook supports explicit account linking; its email is not a verification claim.
+    'facebook' => [
+        'client_id'     => env(key: 'AUTHKIT_FACEBOOK_CLIENT_ID'),
+        'client_secret' => env(key: 'AUTHKIT_FACEBOOK_CLIENT_SECRET'),
+        'redirect'      => env(key: 'AUTHKIT_FACEBOOK_REDIRECT'),
+        'scopes'        => ['email'],
+    ],
+
 ];
