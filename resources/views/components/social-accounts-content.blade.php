@@ -2,19 +2,19 @@
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div class="overflow-hidden rounded-lg bg-white px-6 py-8 sm:px-8">
             <header>
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900">Social Accounts</h1>
-                <p class="mt-2 text-sm text-gray-600">Review the social providers available for sign-in and the accounts linked to your profile.</p>
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ __('laranail/authkit-social-login::messages.social_accounts') }}</h1>
+                <p class="mt-2 text-sm text-gray-600">{{ __('laranail/authkit-social-login::messages.accounts_description') }}</p>
             </header>
 
             @if (session('status') === 'social-account-connected')
                 <div role="status" class="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                    The account was connected.
+                    {{ __('laranail/authkit-social-login::messages.account_connected') }}
                 </div>
             @endif
 
             @if (session('status') === 'social-account-unlinked')
                 <div role="status" class="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                    The account was disconnected.
+                    {{ __('laranail/authkit-social-login::messages.account_disconnected') }}
                 </div>
             @endif
 
@@ -26,10 +26,10 @@
                 <section class="mt-10">
                     <div class="flex flex-wrap items-end justify-between gap-2">
                         <div>
-                            <h2 class="text-lg font-semibold text-gray-900">Supported providers</h2>
-                            <p class="mt-1 text-sm text-gray-600">Providers configured by this application.</p>
+                            <h2 class="text-lg font-semibold text-gray-900">{{ __('laranail/authkit-social-login::messages.supported_providers') }}</h2>
+                            <p class="mt-1 text-sm text-gray-600">{{ __('laranail/authkit-social-login::messages.providers_description') }}</p>
                         </div>
-                        <span class="text-xs font-medium uppercase tracking-wide text-gray-500">{{ $supportedProviders->count() }} {{ \Illuminate\Support\Str::plural('provider', $supportedProviders->count()) }}</span>
+                        <span class="text-xs font-medium uppercase tracking-wide text-gray-500">{{ trans_choice('laranail/authkit-social-login::messages.provider_count', $supportedProviders->count(), ['count' => $supportedProviders->count()]) }}</span>
                     </div>
 
                     <ul class="mt-4 grid gap-3 sm:grid-cols-2">
@@ -42,13 +42,13 @@
                                     <span class="font-medium text-gray-800">{{ $provider['label'] }}</span>
                                 </span>
                                 @if ($provider['connected'])
-                                    <span class="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">Connected</span>
+                                    <span class="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">{{ __('laranail/authkit-social-login::messages.connected') }}</span>
                                 @else
                                     {{-- Connecting is its own endpoint behind `auth`, never the guest sign-in route: reaching
                                          it is how intent is declared. It asks for a confirmed password before redirecting. --}}
                                     <a href="{{ route(\Simtabi\Laranail\AuthKit\Social\Support\SocialWebRoutes::currentMount()['name'] . 'social.connect', ['provider' => $provider['slug']]) }}"
                                        class="inline-flex items-center justify-center rounded-md border border-indigo-200 px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                        Connect
+                                        {{ __('laranail/authkit-social-login::messages.connect') }}
                                     </a>
                                 @endif
                             </li>
@@ -59,14 +59,14 @@
 
             <section class="mt-10">
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900">Linked social accounts</h2>
-                    <p class="mt-1 text-sm text-gray-600">These accounts can be used to sign in.</p>
+                    <h2 class="text-lg font-semibold text-gray-900">{{ __('laranail/authkit-social-login::messages.linked_social_accounts') }}</h2>
+                    <p class="mt-1 text-sm text-gray-600">{{ __('laranail/authkit-social-login::messages.linked_accounts_description') }}</p>
                 </div>
 
                 @if ($accounts->isEmpty())
                     <div class="mt-4 rounded-md border border-dashed border-gray-300 px-5 py-8 text-center">
-                        <p class="font-medium text-gray-800">No social accounts linked</p>
-                        <p class="mt-1 text-sm text-gray-600">Linked social accounts will appear here when available.</p>
+                        <p class="font-medium text-gray-800">{{ __('laranail/authkit-social-login::messages.no_social_accounts_linked') }}</p>
+                        <p class="mt-1 text-sm text-gray-600">{{ __('laranail/authkit-social-login::messages.no_linked_accounts_description') }}</p>
                     </div>
                 @else
                     <ul class="mt-4 divide-y divide-gray-200 rounded-md border border-gray-200">
@@ -82,7 +82,7 @@
                                             @if ($account['email'])
                                                 <p class="mt-1 truncate text-sm text-gray-600">{{ $account['email'] }}</p>
                                             @else
-                                                <p class="mt-1 text-sm text-gray-500">No email address provided</p>
+                                                <p class="mt-1 text-sm text-gray-500">{{ __('laranail/authkit-social-login::messages.no_email_address_provided') }}</p>
                                             @endif
                                         </div>
                                     </div>
@@ -93,18 +93,18 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="inline-flex items-center justify-center rounded-md border border-red-200 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                                            Disconnect
+                                            {{ __('laranail/authkit-social-login::messages.disconnect') }}
                                         </button>
                                     </form>
                                 @else
-                                    <span class="inline-flex w-fit items-center rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600" title="Add another sign-in method first">
-                                        Only sign-in method
+                                    <span class="inline-flex w-fit items-center rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600" title="{{ __('laranail/authkit-social-login::messages.add_another_sign_in_method_first') }}">
+                                        {{ __('laranail/authkit-social-login::messages.only_sign_in_method') }}
                                     </span>
                                 @endif
                             </li>
                         @endforeach
                     </ul>
-                    <p class="mt-3 text-xs text-gray-500">Your only sign-in method cannot be disconnected. Add another sign-in method first.</p>
+                    <p class="mt-3 text-xs text-gray-500">{{ __('laranail/authkit-social-login::messages.only_sign_in_method_help') }}</p>
                 @endif
             </section>
         </div>

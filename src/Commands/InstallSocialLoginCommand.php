@@ -38,7 +38,7 @@ class InstallSocialLoginCommand extends Command
 
         if ($providers !== []) {
             $this->writeEnvironment($providers);
-            $this->info('Social login configured for: ' . implode(', ', $providers) . '.');
+            $this->info(__('laranail/authkit-social-login::messages.installer_providers_configured', ['providers' => implode(', ', $providers)]));
         }
 
         if ($this->option('publish-routes')) {
@@ -46,10 +46,10 @@ class InstallSocialLoginCommand extends Command
                 '--tag'   => 'laranail::authkit-social-login-routes',
                 '--force' => (bool) $this->option('force'),
             ]);
-            $this->line('Set AUTHKIT_SOCIAL_ROUTES_MODE=published and load routes/laranail-authkit-social-login-web.php from the application route bootstrap.');
+            $this->line(__('laranail/authkit-social-login::messages.installer_routes'));
         }
 
-        $this->line('Review config/laranail/authkit-social-login.php and run php artisan migrate.');
+        $this->line(__('laranail/authkit-social-login::messages.installer_next_steps'));
 
         return self::SUCCESS;
     }
@@ -63,7 +63,7 @@ class InstallSocialLoginCommand extends Command
             $labels = SocialProvider::labels();
             $default = [$labels[SocialProvider::GOOGLE->value] ?? 'Google'];
             $selected = $this->choice(
-                question: 'Which social login providers would you like to enable?',
+                question: __('laranail/authkit-social-login::messages.installer_choose_providers'),
                 choices: array_values($labels),
                 default: $default,
                 multiple: true,

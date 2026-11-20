@@ -39,6 +39,10 @@ class SocialServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('laranail/authkit-social-login')
+            ->publish(
+                paths: ['lang' => lang_path('vendor/laranail/authkit-social-login')],
+                tag: 'laranail::authkit-social-login-translations',
+            )
             /*
              * Merged at laranail.authkit-social-login and published to config/laranail/authkit-social-login.php
              * under laranail::authkit-social-login-config. Until 2026-10 this was a literal
@@ -73,6 +77,8 @@ class SocialServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->loadTranslationsFrom($this->packagePath('lang'), 'laranail/authkit-social-login');
+
         $this->loadViewsFrom($this->packagePath('resources/views'), 'laranail/authkit-social-login');
         Blade::anonymousComponentPath($this->packagePath('resources/views/components'), 'laranail-authkit-social-login');
 

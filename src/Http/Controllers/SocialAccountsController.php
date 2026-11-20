@@ -55,7 +55,7 @@ class SocialAccountsController
 
         if (! $unlink->execute(user: $request->user(), provider: $resolved)) {
             return back()->withErrors([
-                'provider' => 'That is the only way you can sign in, so it cannot be removed. Add another sign-in method first.',
+                'provider' => __('laranail/authkit-social-login::messages.only_sign_in_method_error'),
             ]);
         }
 

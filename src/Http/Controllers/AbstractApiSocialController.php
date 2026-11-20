@@ -54,7 +54,7 @@ abstract class AbstractApiSocialController
             // addresses have accounts.
             return new JsonResponse(data: [
                 'status'  => 'error',
-                'message' => 'That social account could not be used to sign in.',
+                'message' => __('laranail/authkit-social-login::messages.sign_in_failed'),
             ], status: 422);
         }
 

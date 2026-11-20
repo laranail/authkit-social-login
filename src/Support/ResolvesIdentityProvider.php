@@ -31,7 +31,7 @@ trait ResolvesIdentityProvider
             ?? app(abstract: IdentityProviderRegistryInterface::class)->get($slug);
 
         if ($provider === null) {
-            throw new NotFoundHttpException(message: 'Unknown social provider.');
+            throw new NotFoundHttpException(message: __('laranail/authkit-social-login::messages.unknown_provider'));
         }
 
         return $provider;

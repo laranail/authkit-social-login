@@ -7,6 +7,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Publishable English translations for package-owned messages and application language overrides.
+
 ### Changed
 
 - CI runs sequential tests on PHP 8.5 against MySQL, MariaDB, and PostgreSQL alongside SQLite.
