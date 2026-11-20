@@ -131,3 +131,30 @@ php artisan vendor:publish --tag=laranail::authkit-social-login-translations
 
 Edit `lang/vendor/laranail/authkit-social-login/en/messages.php`, or add another locale directory there.
 You can override individual keys; the remaining messages keep their package defaults.
+
+## Installer previews and skipped steps
+
+Preview the actions selected by your installation options without writing files:
+
+```sh
+php artisan laranail::authkit-social-login.install --social=google --publish-routes --dry-run --no-interaction
+```
+
+Repeat `--skip` to leave selected steps untouched. Other requested steps still run:
+
+```sh
+php artisan laranail::authkit-social-login.install --social=google --publish-routes --skip=config --skip=environment --no-interaction
+```
+
+| Step | Controls |
+| --- | --- |
+| `config` | Config publishing and selected provider updates |
+| `migrations` | Social accounts migration publishing |
+| `environment` | .env and .env.example provider credentials/callback URLs |
+| `routes` | Optional web route publishing |
+
+Unknown step names fail before any changes. Optional steps still require their enabling options;
+`--skip` does not enable a step. Dry-run can be combined with `--skip` and `--force` and performs
+no writes. On a normal run, `--force` retains its existing overwrite behavior and never overrides
+a skipped step. When skipping prerequisites such as config, migrations, or model edits, provide
+those changes in your application before using the selected features.

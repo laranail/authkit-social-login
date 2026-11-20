@@ -17,31 +17,43 @@ class InstallSocialLoginCommand extends Command
     // same escape hatch; see SupportsNamespacedNames for why dispatch still resolves it.
     use SupportsNamespacedNames;
 
+    private const array INSTALL_STEPS = ['config', 'migrations', 'environment', 'routes'];
+
     protected $signature = 'laranail::authkit-social-login.install
         {--social=* : Social providers to enable (google, apple, x, linkedin, paypal)}
         {--publish-routes : Publish the social web routes for application ownership}
+        {--dry-run : Preview installation without changing files}
+        {--skip=* : Installation steps to skip (config, migrations, environment, routes)}
         {--force : Overwrite the published config and routes}';
 
     protected $description = 'Install and configure laranail/authkit-social-login';
 
     public function handle(): int
     {
+        if (! $this->validateSkippedSteps()) {
+            return self::FAILURE;
+        }
+
         $providers = $this->providers();
 
-        $this->call('vendor:publish', [
-            '--tag'   => 'laranail::authkit-social-login-config',
-            '--force' => (bool) $this->option('force'),
-        ]);
+        if ($this->shouldRunStep('config', __('laranail/authkit-social-login::installer.config'))) {
+            $this->call('vendor:publish', [
+                '--tag'   => 'laranail::authkit-social-login-config',
+                '--force' => (bool) $this->option('force'),
+            ]);
+            $this->writeProviders($providers);
+        }
 
-        $this->writeProviders($providers);
-        $this->publishMigration();
+        if ($this->shouldRunStep('migrations', __('laranail/authkit-social-login::installer.migrations'))) {
+            $this->publishMigration();
+        }
 
-        if ($providers !== []) {
+        if ($providers !== [] && $this->shouldRunStep('environment', __('laranail/authkit-social-login::installer.environment'))) {
             $this->writeEnvironment($providers);
             $this->info(__('laranail/authkit-social-login::messages.installer_providers_configured', ['providers' => implode(', ', $providers)]));
         }
 
-        if ($this->option('publish-routes')) {
+        if ($this->option('publish-routes') && $this->shouldRunStep('routes', __('laranail/authkit-social-login::installer.routes'))) {
             $this->call('vendor:publish', [
                 '--tag'   => 'laranail::authkit-social-login-routes',
                 '--force' => (bool) $this->option('force'),
@@ -49,7 +61,11 @@ class InstallSocialLoginCommand extends Command
             $this->line(__('laranail/authkit-social-login::messages.installer_routes'));
         }
 
-        $this->line(__('laranail/authkit-social-login::messages.installer_next_steps'));
+        if ($this->option('dry-run')) {
+            $this->info(__('laranail/authkit-social-login::installer.dry_run_complete'));
+        } else {
+            $this->line(__('laranail/authkit-social-login::messages.installer_next_steps'));
+        }
 
         return self::SUCCESS;
     }
@@ -167,5 +183,43 @@ class InstallSocialLoginCommand extends Command
         if ($missing !== []) {
             file_put_contents($path, rtrim($contents) . "\n\n" . implode("\n", $missing) . "\n");
         }
+    }
+
+    private function validateSkippedSteps(): bool
+    {
+        $unknown = array_diff($this->option('skip'), self::INSTALL_STEPS);
+
+        if ($unknown !== []) {
+            $this->error(__('laranail/authkit-social-login::installer.invalid_skip', [
+                'steps'     => implode(', ', $unknown),
+                'supported' => implode(', ', self::INSTALL_STEPS),
+            ]));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isStepSkipped(string $step): bool
+    {
+        return in_array($step, $this->option('skip'), true);
+    }
+
+    private function shouldRunStep(string $step, string $description): bool
+    {
+        if ($this->isStepSkipped($step)) {
+            $this->line(__('laranail/authkit-social-login::installer.skipped', ['step' => $step]));
+
+            return false;
+        }
+
+        if ($this->option('dry-run')) {
+            $this->line(__('laranail/authkit-social-login::installer.planned', ['step' => $step, 'description' => $description]));
+
+            return false;
+        }
+
+        return true;
     }
 }

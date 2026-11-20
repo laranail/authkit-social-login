@@ -9,6 +9,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Installer `--dry-run` previews selected actions without file changes, and repeatable `--skip`
+  leaves selected steps untouched. Unknown step names fail before any writes; `--force` remains supported.
+
 - Publishable English translations for package-owned messages and application language overrides.
 
 ### Changed
