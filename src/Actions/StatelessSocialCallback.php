@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\AuthKit\Social\Actions;
 
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Laravel\Socialite\Two\InvalidStateException;
 use Simtabi\Laranail\AuthKit\Support\TokenResult;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
 use Simtabi\Laranail\AuthKit\Contracts\IssueTokenForUserInterface;
@@ -59,7 +61,17 @@ class StatelessSocialCallback implements StatelessSocialCallbackInterface
             $driver = $driver->stateless();
         }
 
-        $socialiteUser = $driver->user();
+        try {
+            $socialiteUser = $driver->user();
+        } catch (InvalidStateException|ClientException) {
+            return null;
+        }
+
+        $providerId = $socialiteUser->getId();
+
+        if ((! is_string($providerId) && ! is_int($providerId)) || trim((string) $providerId) === '') {
+            return null;
+        }
 
         // The same resolver the web flow uses. Verification and account-linking rules are decided
         // in exactly one place, so an API client can never be granted something a browser could not.

@@ -20,7 +20,7 @@ class InstallSocialLoginCommand extends Command
     private const array INSTALL_STEPS = ['config', 'migrations', 'environment', 'routes'];
 
     protected $signature = 'laranail::authkit-social-login.install
-        {--social=* : Social providers to enable (google, apple, x, linkedin, paypal)}
+        {--social=* : Social providers to enable (google, apple, x, linkedin, paypal, github, facebook)}
         {--publish-routes : Publish the social web routes for application ownership}
         {--dry-run : Preview installation without changing files}
         {--skip=* : Installation steps to skip (config, migrations, environment, routes)}

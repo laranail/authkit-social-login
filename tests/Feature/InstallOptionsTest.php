@@ -151,3 +151,18 @@ it('preserves existing published files unless force is requested', function (): 
     $this->artisan('laranail::authkit-social-login.install', [...installerOptions(), '--force' => true])->assertSuccessful();
     expect(file_get_contents(base_path('routes/laranail-authkit-social-login-web.php')))->not->toBe($this->beforeInstall['routes/laranail-authkit-social-login-web.php']);
 });
+
+it('configures GitHub and Facebook credentials through the installer', function (): void {
+    $this->artisan('laranail::authkit-social-login.install', [...installerOptions(), '--social' => ['github', 'facebook'], '--force' => true])->assertSuccessful();
+    $config = file_get_contents(config_path('laranail/authkit-social-login.php'));
+    expect($config)->toContain("'providers' => ['github', 'facebook']");
+    foreach (['.env', '.env.example'] as $path) {
+        $contents = file_get_contents(base_path($path));
+        foreach (['GITHUB', 'FACEBOOK'] as $provider) {
+            expect($contents)->toContain("AUTHKIT_{$provider}_CLIENT_ID=")
+                ->toContain("AUTHKIT_{$provider}_CLIENT_SECRET=")
+                ->toContain("AUTHKIT_{$provider}_REDIRECT=");
+        }
+        expect($contents)->toContain('/auth/social/github/callback')->toContain('/auth/social/facebook/callback');
+    }
+});

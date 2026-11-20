@@ -9,6 +9,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- GitHub and Facebook providers, installer credential setup, and Blade icons. GitHub uses verified
+  primary email addresses; Facebook supports explicit linking and subsequent provider-ID login.
+- Invalid state, rejected provider exchanges, and missing provider IDs are rejected without
+  authenticating or creating a social identity.
+
 - Installer `--dry-run` previews selected actions without file changes, and repeatable `--skip`
   leaves selected steps untouched. Unknown step names fail before any writes; `--force` remains supported.
 

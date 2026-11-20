@@ -28,6 +28,12 @@ enum SocialProvider: string implements Enumerator, SocialIdentityProviderInterfa
     #[Label('PayPal')]
     case PAYPAL = 'paypal';
 
+    #[Label('GitHub')]
+    case GITHUB = 'github';
+
+    #[Label('Facebook')]
+    case FACEBOOK = 'facebook';
+
     /**
      * Whether this provider asserts that it verified the address it returns.
      *
@@ -36,14 +42,14 @@ enum SocialProvider: string implements Enumerator, SocialIdentityProviderInterfa
      * anyone able to register an account carrying someone else's address would
      * otherwise take over that account.
      *
-     * Every provider currently shipped asserts it. The method is the seam: adding a
-     * provider that does not is a single arm here, and it then cannot link without
-     * anything else changing.
+     * Facebook does not assert email verification. It supports explicit linking to an
+     * authenticated account and subsequent sign-in by provider ID, never email matching.
      */
     public function assertsEmailVerified(): bool
     {
         return match ($this) {
-            self::GOOGLE, self::APPLE, self::LINKEDIN, self::PAYPAL, self::X => true,
+            self::GOOGLE, self::APPLE, self::LINKEDIN, self::PAYPAL, self::X, self::GITHUB => true,
+            self::FACEBOOK                                                                 => false,
         };
     }
 
@@ -69,11 +75,12 @@ enum SocialProvider: string implements Enumerator, SocialIdentityProviderInterfa
     public function hasVerifiedEmail(array $rawUser): bool
     {
         return match ($this) {
-            self::GOOGLE, self::APPLE, self::LINKEDIN, self::PAYPAL => filter_var(
+            self::GOOGLE, self::APPLE, self::LINKEDIN, self::PAYPAL, self::GITHUB => filter_var(
                 $rawUser['email_verified'] ?? false,
                 FILTER_VALIDATE_BOOLEAN,
             ),
-            self::X => is_string($rawUser['confirmed_email'] ?? null)
+            self::FACEBOOK => false,
+            self::X        => is_string($rawUser['confirmed_email'] ?? null)
                 && filter_var($rawUser['confirmed_email'], FILTER_VALIDATE_EMAIL) !== false,
         };
     }
@@ -103,8 +110,8 @@ enum SocialProvider: string implements Enumerator, SocialIdentityProviderInterfa
     public function driver(): string
     {
         return match ($this) {
-            self::GOOGLE, self::APPLE, self::X, self::PAYPAL => $this->value,
-            self::LINKEDIN                                   => 'linkedin-openid',
+            self::GOOGLE, self::APPLE, self::X, self::PAYPAL, self::GITHUB, self::FACEBOOK => $this->value,
+            self::LINKEDIN                                                                 => 'linkedin-openid',
         };
     }
 

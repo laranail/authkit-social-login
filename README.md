@@ -9,6 +9,10 @@
 
 Requires PHP 8.4+ and Laravel 13, and extends [`laranail/authkit`](https://github.com/laranail/authkit).
 
+Supports Google, Apple, X, LinkedIn, PayPal, GitHub, and Facebook. GitHub uses verified primary
+email addresses; Facebook requires explicit linking before login. See
+[provider setup](docs/social-login.md#github-and-facebook-setup) for credentials and callback URLs.
+
 ## Install
 
 `laranail/*` packages resolve through git, not Packagist. Add the repositories block to your

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\AuthKit\Social\Actions;
 
 use Illuminate\Http\Request;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Laravel\Socialite\Two\InvalidStateException;
 use Simtabi\Laranail\AuthKit\Support\AuthResult;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
 use Simtabi\Laranail\AuthKit\Social\Support\ResolvesIdentityProvider;
@@ -24,7 +26,21 @@ class SocialCallbackAction implements SocialCallbackActionInterface
     public function execute(Request $request, string $guard): AuthResult
     {
         $provider = $this->resolveProvider(request: $request);
-        $socialiteUser = $this->socialite->driver($provider->driver())->user();
+
+        if ($request->filled('error')) {
+            return AuthResult::failed();
+        }
+        try {
+            $socialiteUser = $this->socialite->driver($provider->driver())->user();
+        } catch (InvalidStateException|ClientException) {
+            return AuthResult::failed();
+        }
+
+        $providerId = $socialiteUser->getId();
+
+        if ((! is_string($providerId) && ! is_int($providerId)) || trim((string) $providerId) === '') {
+            return AuthResult::failed();
+        }
 
         $user = $this->resolver->execute(
             provider: $provider,

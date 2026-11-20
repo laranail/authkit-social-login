@@ -42,7 +42,7 @@ the reusable Blade buttons. It can be installed independently or alongside the p
 
 ## Scope
 
-- Socialite-backed providers — Google, Apple, X, LinkedIn, and a custom PayPal driver
+- Socialite-backed providers — Google, Apple, X, LinkedIn, PayPal, GitHub, and Facebook (explicit linking)
 - The redirect and callback halves of the OAuth consumer flow, as overridable abstract controllers
 - Identity linking and just-in-time provisioning, including the `email_verified` matrix that decides
   when a social identity may attach to an existing account
