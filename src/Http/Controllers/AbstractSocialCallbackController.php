@@ -27,8 +27,8 @@ abstract class AbstractSocialCallbackController extends AbstractAuthController
         if ($request->expectsJson()) {
             return match ($result->status) {
                 AuthStatus::Passed => $this->jsonResponse(status: 'passed', data: ['user' => $result->user]),
-                AuthStatus::Failed => $this->jsonResponse(status: 'failed', data: ['message' => 'Social authentication failed.'], code: 422),
-                default            => $this->jsonResponse(status: 'failed', data: ['message' => 'Social authentication failed.'], code: 422),
+                AuthStatus::Failed => $this->jsonResponse(status: 'failed', data: ['message' => __('laranail/authkit-social-login::messages.authentication_failed')], code: 422),
+                default            => $this->jsonResponse(status: 'failed', data: ['message' => __('laranail/authkit-social-login::messages.authentication_failed')], code: 422),
             };
         }
 
@@ -57,6 +57,6 @@ abstract class AbstractSocialCallbackController extends AbstractAuthController
     protected function failed(Request $request, AuthResult $result): mixed
     {
         return redirect()->to(path: route('login'))
-            ->withErrors(provider: ['email' => 'Social authentication failed.']);
+            ->withErrors(provider: ['email' => __('laranail/authkit-social-login::messages.authentication_failed')]);
     }
 }

@@ -27,8 +27,8 @@ class WebSocialCallbackController extends AbstractSocialCallbackController
         $route = SocialWebRoutes::currentMount()['name'] . 'login';
 
         return is_string($route) && \Illuminate\Support\Facades\Route::has($route)
-            ? redirect()->to(route($route))->withErrors(provider: ['email' => 'Social authentication failed.'])
+            ? redirect()->to(route($route))->withErrors(provider: ['email' => __('laranail/authkit-social-login::messages.authentication_failed')])
             : redirect()->to(SocialConfig::get('web.failed_redirect', '/login'))
-                ->withErrors(provider: ['email' => 'Social authentication failed.']);
+                ->withErrors(provider: ['email' => __('laranail/authkit-social-login::messages.authentication_failed')]);
     }
 }
