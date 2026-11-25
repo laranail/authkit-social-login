@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Workbench\App\Models\User;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
@@ -71,8 +72,8 @@ it(description: 'stores encrypted tokens', closure: function (): void {
         'id'    => 'google-789',
         'email' => 'token@example.com',
     ]);
-    $socialiteUser->token = 'my-secret-token';
-    $socialiteUser->refreshToken = 'my-secret-refresh-token';
+    $socialiteUser->token = TestCredentials::secret('access');
+    $socialiteUser->refreshToken = TestCredentials::secret('refresh');
 
     $action = app(abstract: CreateSocialAccountAction::class);
 
@@ -85,8 +86,8 @@ it(description: 'stores encrypted tokens', closure: function (): void {
     // Reload from DB to check encrypted values
     $fresh = Social::find($social->id);
 
-    expect(value: $fresh->token)->toBe('my-secret-token')
-        ->and(value: $fresh->refresh_token)->toBe('my-secret-refresh-token');
+    expect(value: $fresh->token)->toBe(TestCredentials::secret('access'))
+        ->and(value: $fresh->refresh_token)->toBe(TestCredentials::secret('refresh'));
 });
 
 it(description: 'handles null expires_at', closure: function (): void {
