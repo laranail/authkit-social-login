@@ -7,6 +7,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+- `SocialProvider::hasVerifiedEmail()` short-circuits on `assertsEmailVerified()`. The documented
+  takeover guard is both halves; only one was consulted, so the two exhaustive matches were
+  expected to agree rather than made to. Nothing was exploitable — the one provider asserting
+  nothing already returned false — but a later case reading a claim while asserting nothing would
+  have linked on an unverified address.
+
 ### Removed
 
 - **BREAKING: `web.enabled` and `AUTHKIT_SOCIAL_WEB_ENABLED` are gone.** The browser surface is now
@@ -30,6 +37,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Publishable English translations for package-owned messages and application language overrides.
 
 ### Changed
+- A tag-driven release workflow: it builds the GitHub release body from this file's matching
+  section, marks any `-` suffix as a pre-release, and attaches a CycloneDX SBOM. The package had
+  none, which is why it has tags and no GitHub releases.
+- CI gained a weekly scheduled run on the default branch. Nothing ran on a merge, so drift on
+  `main` was invisible until an unrelated pull request went red.
 
 - CI runs sequential tests on PHP 8.5 against MySQL, MariaDB, and PostgreSQL alongside SQLite.
   Database jobs disable coverage, and the test harness registers migrations consistently across drivers.
@@ -324,3 +336,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 [Unreleased]: https://github.com/laranail/authkit-social-login/compare/v0.1.1...HEAD
 [0.1.1]: https://github.com/laranail/authkit-social-login/compare/v0.1.0...v0.1.1
+
+## [0.1.0] - 2026-10-19
+
+### Added
+
+- Social sign-in for AuthKit on Laravel Socialite: Google, Apple, X, LinkedIn and PayPal behind one
+  identity-provider seam, a registry so a sub-package can contribute its own, the `socials` table
+  and model with encrypted tokens, browser and API callback flows sharing one resolution path, and
+  the `laranail::authkit-social-login.install` command.
