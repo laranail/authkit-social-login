@@ -7,23 +7,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
-- `SocialProvider::hasVerifiedEmail()` short-circuits on `assertsEmailVerified()`. The documented
-  takeover guard is both halves; only one was consulted, so the two exhaustive matches were
-  expected to agree rather than made to. Nothing was exploitable — the one provider asserting
-  nothing already returned false — but a later case reading a claim while asserting nothing would
-  have linked on an unverified address.
-
-### Removed
-
-- **BREAKING: `web.enabled` and `AUTHKIT_SOCIAL_WEB_ENABLED` are gone.** The browser surface is now
-  gated by declaring `Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN` in
-  `laranail.authkit.fortify.features`. It was a second switch that could disagree with the first,
-  and it failed silently: the buttons component renders an empty provider list as no markup, so an
-  application with everything else configured saw nothing and had no error to follow. See
-  [the upgrade guide](docs/upgrading.md). **A deployment that does not declare the feature loses its social
-  buttons and browser routes after this change.** `enabled` and `api.enabled` are unaffected.
-
 ### Added
 
 - GitHub and Facebook providers, installer credential setup, and Blade icons. GitHub uses verified
@@ -35,8 +18,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   leaves selected steps untouched. Unknown step names fail before any writes; `--force` remains supported.
 
 - Publishable English translations for package-owned messages and application language overrides.
+- Release workflow: a `workflow_dispatch` that re-runs a release against a tag that already exists. A release tag can never be moved or reused, so a run that died at `composer install` or in the SBOM step was previously unrecoverable.
 
 ### Changed
+
 - A tag-driven release workflow: it builds the GitHub release body from this file's matching
   section, marks any `-` suffix as a pre-release, and attaches a CycloneDX SBOM. The package had
   none, which is why it has tags and no GitHub releases.
@@ -45,6 +30,33 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - CI runs sequential tests on PHP 8.5 against MySQL, MariaDB, and PostgreSQL alongside SQLite.
   Database jobs disable coverage, and the test harness registers migrations consistently across drivers.
+- Release workflow: `Latest` is no longer asserted for every final tag. A `latest` dispatch input set to `false` lets a patch to an older line publish without demoting a newer one, and the tag shape is validated against the release conventions before anything is published.
+- The credential-literal guard's `minFiles` floor now equals the number of files it actually inspects, so a glob that stops matching fails instead of reporting a clean tree.
+- Release workflow: `permissions` is read-only at the top level and widened to `contents: write` on the release job only, so a job added later starts with no write access. The tag trigger is one pattern rather than two -- GitHub's `*` matches `.` and `-`, so `v*.*.*` already starts on `v0.1.0-rc.1`.
+
+### Removed
+
+- **BREAKING: `web.enabled` and `AUTHKIT_SOCIAL_WEB_ENABLED` are gone.** The browser surface is now
+  gated by declaring `Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN` in
+  `laranail.authkit.fortify.features`. It was a second switch that could disagree with the first,
+  and it failed silently: the buttons component renders an empty provider list as no markup, so an
+  application with everything else configured saw nothing and had no error to follow. See
+  [the upgrade guide](docs/upgrading.md). **A deployment that does not declare the feature loses its social
+  buttons and browser routes after this change.** `enabled` and `api.enabled` are unaffected.
+
+### Fixed
+
+- `SocialProvider::hasVerifiedEmail()` short-circuits on `assertsEmailVerified()`. The documented
+  takeover guard is both halves; only one was consulted, so the two exhaustive matches were
+  expected to agree rather than made to. Nothing was exploitable — the one provider asserting
+  nothing already returned false — but a later case reading a claim while asserting nothing would
+  have linked on an unverified address.
+- `laranail/authkit` is required at `^0.1.2`, the version that first ships `AuthKit::socialLoginEnabled()`. At `^0.1.1` a stable install resolved authkit v0.1.1, which does not define that method, and the service provider calls it while booting -- so the package fataled on boot rather than failing to resolve.
+- Release workflow: the CHANGELOG extractor stopped at the next version heading only, so the **last** section in the file ran to EOF and the release body ended in `[0.1.0]: https://...` link-reference lines. It now also stops at the link block.
+- The installer warns when it finishes if AuthKit's `social-login` feature is still undeclared. The feature lives in the core's config, so the installer cannot set it, and without it a complete install renders no provider buttons and mounts no browser routes -- silently.
+- `docs/getting-started.md` still said the package registers its web routes and button component as soon as it is installed, and the README implied the installer switches everything on. Both now state the two switches and that they are different scopes. `docs/upgrading.md` was missing from the README's documentation index, so the one page an upgrading operator needs was unreachable from it.
+- `SocialProvider`'s docblock and `docs/social-login.md` still promised that both verification matches are exhaustive. Since `hasVerifiedEmail()` short-circuits on `assertsEmailVerified()`, a provider that asserts nothing never reaches the claim match, so only a provider claiming to verify must declare a claim shape -- and `self::FACEBOOK => false` in the second match is no longer reachable. The docs say this, and the contributor instruction no longer asks for an arm that would never run.
+- The feature-gate test asserting that no provider buttons render set no client id, and `SocialProviders::buttons()` skips a provider without one -- so it passed whatever the gate answered. Proved by hard-wiring the gate to true, which left that test green while the two either side of it failed. It now configures credentials, so the feature is the only thing missing.
 
 ## [0.1.1] - 2026-11-13
 
@@ -334,9 +346,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   requests it via the `users.email` scope and `user.fields` — so every X login was treated as
   unverified. It is now trusted through its own claim.
 
-[Unreleased]: https://github.com/laranail/authkit-social-login/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/laranail/authkit-social-login/compare/v0.1.0...v0.1.1
-
 ## [0.1.0] - 2026-10-19
 
 ### Added
@@ -345,3 +354,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   identity-provider seam, a registry so a sub-package can contribute its own, the `socials` table
   and model with encrypted tokens, browser and API callback flows sharing one resolution path, and
   the `laranail::authkit-social-login.install` command.
+
+[Unreleased]: https://github.com/laranail/authkit-social-login/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/laranail/authkit-social-login/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/laranail/authkit-social-login/releases/tag/v0.1.0

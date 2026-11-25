@@ -28,6 +28,9 @@ return [
     'only_sign_in_method_help'         => 'Your only sign-in method cannot be disconnected. Add another sign-in method first.',
     'installer_routes'                 => 'Set AUTHKIT_SOCIAL_ROUTES_MODE=published and load routes/laranail-authkit-social-login-web.php from the application route bootstrap.',
     'installer_next_steps'             => 'Review config/laranail/authkit-social-login.php and run php artisan migrate.',
-    'installer_providers_configured'   => 'Social login configured for: :providers.',
-    'installer_choose_providers'       => 'Which social login providers would you like to enable?',
+    'installer_feature_undeclared'     => 'Social login is installed but its browser surface is off: add '
+        . "Simtabi\\Laranail\\AuthKit\\Support\\AuthKit::SOCIAL_LOGIN to the 'fortify.features' list in "
+        . 'config/laranail/authkit.php. Until then no provider buttons render and no social web routes mount.',
+    'installer_providers_configured' => 'Social login configured for: :providers.',
+    'installer_choose_providers'     => 'Which social login providers would you like to enable?',
 ];

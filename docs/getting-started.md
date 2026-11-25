@@ -2,9 +2,20 @@
 
 Install the package, configure Google, render the buttons, and follow one sign-in from the redirect to the session.
 
-The package is enabled as soon as it is installed: `laranail.authkit-social-login.enabled` defaults to `true`
-(`AUTHKIT_SOCIAL_ENABLED`), and it registers its own web routes, callback controllers, linked-accounts
-page and Blade button component. Set `AUTHKIT_SOCIAL_ENABLED=false` to switch it off.
+Installing the package is not enough to see anything. Two switches have to agree, and they are
+different scopes:
+
+- **The package's master switch**, `laranail.authkit-social-login.enabled` (`AUTHKIT_SOCIAL_ENABLED`),
+  defaults to `true` and turns the whole package off when set to `false` — API included.
+- **AuthKit's `social-login` feature**, which gates the browser surface: the web routes, callback
+  controllers, linked-accounts page and Blade button component. It is **not** in the shipped
+  defaults, so a fresh install renders no buttons and mounts no browser routes until an application
+  adds `Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN` to
+  `laranail.authkit.fortify.features` in `config/laranail/authkit.php`. The installer warns about
+  this when it finishes.
+
+It replaced a `web.enabled` key of this package's own, which was a second place that could disagree
+with the first — see [upgrading](upgrading.md).
 
 ## 1. Install and migrate
 

@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\AuthKit\Social\Commands;
 
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Simtabi\Laranail\AuthKit\Support\AuthKit;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 use Simtabi\Laranail\AuthKit\Social\Support\SocialConfig;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
@@ -65,6 +66,14 @@ class InstallSocialLoginCommand extends Command
             $this->info(__('laranail/authkit-social-login::installer.dry_run_complete'));
         } else {
             $this->line(__('laranail/authkit-social-login::messages.installer_next_steps'));
+        }
+
+        // The browser surface is gated on AuthKit's `social-login` feature, and nothing this
+        // command does declares it -- the feature lives in the core's config, which belongs to the
+        // application. Said here because the failure is otherwise silent: migrations run, providers
+        // are written, and the login page renders no buttons and mounts no routes.
+        if (! AuthKit::socialLoginEnabled()) {
+            $this->warn(__('laranail/authkit-social-login::messages.installer_feature_undeclared'));
         }
 
         return self::SUCCESS;

@@ -67,8 +67,14 @@ enum SocialProvider: string implements Enumerator, SocialIdentityProviderInterfa
      * verifies those, so they are trusted here; they simply will not match a local
      * account, so in practice they provision rather than link.
      *
-     * The match is deliberately exhaustive: a new case on this enum fails loudly
-     * here rather than defaulting to either answer.
+     * Both matches are exhaustive, so a new case has to answer `assertsEmailVerified()`
+     * or PHP throws. What the short-circuit below changes is which arm it then has to
+     * write: a case that asserts nothing returns early and never reaches the claim
+     * match, so only a case claiming to verify is forced to declare a claim shape.
+     * That is the right way round -- a provider that asserts nothing has nothing to
+     * read -- but it does mean `self::FACEBOOK => false` in the second match is no
+     * longer reachable. It stays as the answer for Facebook if the short-circuit is
+     * ever removed, rather than leaving the arm to be re-derived.
      *
      * @param array<string, mixed> $rawUser
      */

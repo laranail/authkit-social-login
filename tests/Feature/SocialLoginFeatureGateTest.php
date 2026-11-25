@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Simtabi\Laranail\AuthKit\Support\AuthKit;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Simtabi\Laranail\AuthKit\Social\Support\SocialProviders;
 
 /**
@@ -36,8 +37,16 @@ it('reports the feature as off once it is not declared', function (): void {
 
 it('renders no provider buttons while the feature is undeclared', function (): void {
     // Providers are configured and the package is enabled: the feature is the only thing missing.
+    //
+    // The client id matters, and this test did not set one. `SocialProviders::buttons()` skips any
+    // provider without one, so `toBe([])` held whatever the gate answered -- proved by hard-wiring
+    // `AuthKit::socialLoginEnabled()` to true, which left this test green while the two either side
+    // of it went red. With credentials present, the feature is genuinely the only thing missing.
     config()->set('laranail.authkit-social-login.providers', ['google']);
     config()->set('laranail.authkit-social-login.enabled', true);
+    config()->set('laranail.authkit-social-login.google.client_id', 'google-client-id');
+    config()->set('laranail.authkit-social-login.google.client_secret', TestCredentials::secret('google'));
+    config()->set('laranail.authkit-social-login.google.redirect', 'https://example.test/social/google/callback');
 
     expect(SocialProviders::buttons())->toBe([]);
 });
