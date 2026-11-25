@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Workbench\App\Models\User;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 use Simtabi\Laranail\AuthKit\Social\Actions\CreateSocialAccountAction;
 
 it(description: 'creates a social account with morph', closure: function (): void {
