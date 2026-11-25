@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\AuthKit\Social\Support;
 
+use Simtabi\Laranail\AuthKit\Support\AuthKit;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 
@@ -13,7 +14,7 @@ final class SocialProviders
     public static function buttons(): array
     {
         if (! SocialConfig::get('enabled', true)
-            || ! SocialConfig::get('web.enabled', true)) {
+            || ! AuthKit::socialLoginEnabled()) {
             return [];
         }
 

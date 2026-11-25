@@ -109,7 +109,6 @@ return [
     ],
 
     'web' => [
-        'enabled'           => (bool) env(key: 'AUTHKIT_SOCIAL_WEB_ENABLED', default: true),
         'guard'             => env(key: 'AUTHKIT_SOCIAL_GUARD', default: env(key: 'AUTHKIT_PRESET_GUARD', default: 'web')),
         'prefix'            => env(key: 'AUTHKIT_SOCIAL_WEB_PREFIX', default: env(key: 'AUTHKIT_PRESET_WEB_PREFIX', default: 'auth')),
         'route_name_prefix' => env(key: 'AUTHKIT_SOCIAL_ROUTE_NAME_PREFIX', default: 'laranail-social.'),

@@ -70,6 +70,10 @@ The installer above does all of this; these are the pieces it touches, for a man
   route file, `laranail::authkit-social-login-routes`.
 - **Migrations** — run `php artisan migrate` after publishing; the package does not load its
   migrations automatically.
+- **Declare the feature** — add `Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN` to
+  `laranail.authkit.fortify.features`. The browser buttons and routes are gated on it; without it
+  nothing renders and nothing mounts, whatever else is configured. Upgrading from a release that
+  used `web.enabled`? See [the upgrade guide](docs/upgrading.md).
 - **Env keys** — per provider, `AUTHKIT_<PROVIDER>_CLIENT_ID`, `AUTHKIT_<PROVIDER>_CLIENT_SECRET` and
   `AUTHKIT_<PROVIDER>_REDIRECT` (for example `AUTHKIT_GOOGLE_CLIENT_ID`). Social login is on by
   default; `AUTHKIT_SOCIAL_ENABLED=false` switches it off, and `AUTHKIT_SOCIAL_API_ENABLED=true`

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\AuthKit\Social\Support;
 
 use Illuminate\Support\Facades\Route;
+use Simtabi\Laranail\AuthKit\Support\AuthKit;
 
 final class SocialWebRoutes
 {
@@ -51,7 +52,7 @@ final class SocialWebRoutes
     public static function register(): void
     {
         if (! SocialConfig::get('enabled', true)
-            || ! SocialConfig::get('web.enabled', true)) {
+            || ! AuthKit::socialLoginEnabled()) {
             return;
         }
 

@@ -7,6 +7,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Removed
+
+- **BREAKING: `web.enabled` and `AUTHKIT_SOCIAL_WEB_ENABLED` are gone.** The browser surface is now
+  gated by declaring `Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN` in
+  `laranail.authkit.fortify.features`. It was a second switch that could disagree with the first,
+  and it failed silently: the buttons component renders an empty provider list as no markup, so an
+  application with everything else configured saw nothing and had no error to follow. See
+  [the upgrade guide](docs/upgrading.md). **A deployment that does not declare the feature loses its social
+  buttons and browser routes after this change.** `enabled` and `api.enabled` are unaffected.
+
 ### Added
 
 - GitHub and Facebook providers, installer credential setup, and Blade icons. GitHub uses verified

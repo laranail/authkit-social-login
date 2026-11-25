@@ -20,9 +20,27 @@ php artisan vendor:publish --tag=laranail::authkit-social-login-config
 
 ## Web routes
 
+The browser surface — the provider buttons, the sign-in routes and connected-account management —
+is switched on by declaring the `social-login` feature on AuthKit's own list, not by a key in this
+file:
+
+```php
+// config/laranail/authkit.php
+'fortify' => [
+    'features' => [
+        // ...
+        \Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN,
+    ],
+],
+```
+
+Without it the buttons render nothing and the browser routes are not mounted, however this file is
+configured. The keys below describe *how* that surface is mounted once it is on. The package-wide
+`enabled` key and the separate `api.enabled` key are unaffected: `enabled` turns the whole package
+off, and the API routes have their own switch.
+
 | Key | Type | Default | Purpose |
 |---|---|---|---|
-| `web.enabled` | bool | `true` | Enables browser social routes and account management. |
 | `web.guard` | string | `web` | Standalone authentication guard. |
 | `web.prefix` | string | `auth` | Standalone URL prefix. |
 | `web.route_name_prefix` | string | `laranail-social.` | Standalone route-name prefix. |
