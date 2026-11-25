@@ -74,6 +74,17 @@ enum SocialProvider: string implements Enumerator, SocialIdentityProviderInterfa
      */
     public function hasVerifiedEmail(array $rawUser): bool
     {
+        // The documented guard is both halves: whether the provider asserts verification at all,
+        // and what its payload claims. Only the second was consulted here, so the two exhaustive
+        // matches below were merely expected to agree rather than made to. They do agree today --
+        // Facebook is the one provider asserting nothing and its arm is hardcoded false -- but a
+        // future case reading a claim while asserting nothing would link on an unverified address,
+        // and that is an account-takeover path. `IdentityProvider::hasVerifiedEmail()` already
+        // short-circuits the same way for registry-contributed providers.
+        if (! $this->assertsEmailVerified()) {
+            return false;
+        }
+
         return match ($this) {
             self::GOOGLE, self::APPLE, self::LINKEDIN, self::PAYPAL, self::GITHUB => filter_var(
                 $rawUser['email_verified'] ?? false,
