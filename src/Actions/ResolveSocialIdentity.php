@@ -6,7 +6,6 @@ namespace Simtabi\Laranail\AuthKit\Social\Actions;
 
 use Illuminate\Support\Str;
 use Laravel\Socialite\AbstractUser;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
@@ -21,6 +20,8 @@ class ResolveSocialIdentity implements ResolveSocialIdentityInterface
 {
     public function __construct(
         private CreateSocialAccountActionInterface $createSocialAccount,
+        private \Illuminate\Contracts\Hashing\Hasher $hasher,
+        private \Illuminate\Contracts\Auth\Factory $auth,
     ) {}
 
     public function execute(SocialIdentityProviderInterface $provider, SocialiteUser $socialUser, string $guard): ?Authenticatable
@@ -30,11 +31,11 @@ class ResolveSocialIdentity implements ResolveSocialIdentityInterface
             ->where('provider_id', $socialUser->getId())
             ->first();
 
-        // Read the signed-in user through the guard this callback is for. `auth()->user()`
+        // Read the signed-in user through the guard this callback is for. `$this->auth->user()`
         // answers for the default guard, which on an application using any other one is null --
         // and a null here would read as "nobody is signed in", which is exactly the branch the
         // check below exists to avoid taking.
-        $current = auth()->guard($guard)->user();
+        $current = $this->auth->guard($guard)->user();
 
         if ($social !== null) {
             $owner = $social->socialable;
@@ -158,7 +159,7 @@ class ResolveSocialIdentity implements ResolveSocialIdentityInterface
             'name'              => $socialUser->getName() ?? $socialUser->getNickname() ?? '',
             'email'             => $email,
             'email_verified_at' => now(),
-            'password'          => Hash::make(Str::random(32)),
+            'password'          => $this->hasher->make(Str::random(32)),
         ]);
         $user->save();
 

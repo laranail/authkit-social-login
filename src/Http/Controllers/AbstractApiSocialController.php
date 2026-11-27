@@ -22,6 +22,10 @@ abstract class AbstractApiSocialController
 {
     use ResolvesIdentityProvider;
 
+    public function __construct(
+        private \Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface $providers,
+    ) {}
+
     /** The URL the client should open to begin sign-in. */
     public function redirect(Request $request, SocialiteFactory $socialite): JsonResponse
     {

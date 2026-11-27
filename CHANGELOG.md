@@ -9,11 +9,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Run shared facade/config-key guards and two-request state isolation checks alongside real driver-contract and published-config tests.
+- Inject authentication service dependencies; retain documented line-level exceptions for public static compatibility APIs and framework-owned construction.
+
 - Standardized the README, documentation navigation, installation and feature-scope guidance;
   added localization and troubleshooting references and corrected stale setup instructions.
 - Aligned contribution guidance and GitHub issue/PR templates with the shared repository conventions.
 
 ### Added
+
+- Collect architecture tests in the default PHPUnit suite and require package-tools `^0.1.13` for shared guards.
 
 - GitHub and Facebook providers, installer credential setup, and Blade icons. GitHub uses verified
   primary email addresses; Facebook supports explicit linking and subsequent provider-ID login.

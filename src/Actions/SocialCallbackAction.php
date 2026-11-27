@@ -21,6 +21,7 @@ class SocialCallbackAction implements SocialCallbackActionInterface
     public function __construct(
         private SocialiteFactory $socialite,
         private ResolveSocialIdentityInterface $resolver,
+        private \Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface $providers,
     ) {}
 
     public function execute(Request $request, string $guard): AuthResult

@@ -12,6 +12,10 @@ use Simtabi\Laranail\AuthKit\Social\Support\SocialWebRoutes;
 
 class WebSocialCallbackController extends AbstractSocialCallbackController
 {
+    public function __construct(
+        private \Illuminate\Routing\Router $router,
+    ) {}
+
     protected function guard(): string
     {
         return (string) (SocialWebRoutes::currentMount()['guard'] ?? AuthKit::guard());
@@ -26,7 +30,7 @@ class WebSocialCallbackController extends AbstractSocialCallbackController
     {
         $route = SocialWebRoutes::currentMount()['name'] . 'login';
 
-        return is_string($route) && \Illuminate\Support\Facades\Route::has($route)
+        return is_string($route) && $this->router->has($route)
             ? redirect()->to(route($route))->withErrors(provider: ['email' => __('laranail/authkit-social-login::messages.authentication_failed')])
             : redirect()->to(SocialConfig::get('web.failed_redirect', '/login'))
                 ->withErrors(provider: ['email' => __('laranail/authkit-social-login::messages.authentication_failed')]);

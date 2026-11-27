@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Simtabi\Laranail\AuthKit\Contracts\SocialIdentityProviderInterface;
-use Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface;
 
 /**
  * Turns the `{provider}` route parameter into a provider, whoever supplied it.
@@ -28,7 +27,7 @@ trait ResolvesIdentityProvider
         $slug = (string) $request->route('provider');
 
         $provider = SocialProvider::tryFrom($slug)
-            ?? app(abstract: IdentityProviderRegistryInterface::class)->get($slug);
+            ?? $this->providers->get($slug);
 
         if ($provider === null) {
             throw new NotFoundHttpException(message: __('laranail/authkit-social-login::messages.unknown_provider'));

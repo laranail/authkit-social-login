@@ -23,6 +23,7 @@ final class SocialProviders
             return [];
         }
 
+        // @facade-call-exempt: Public static button API resolves the current provider registry without retaining user/request data.
         $registry = app(abstract: IdentityProviderRegistryInterface::class);
         $descriptors = [];
 
