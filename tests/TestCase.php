@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\AuthKit\Social\Tests;
 use Workbench\App\Models\User;
 use Laravel\Fortify\FortifyServiceProvider;
 use Laravel\Sanctum\SanctumServiceProvider;
+use Simtabi\Laranail\AuthKit\Support\AuthKit;
 use Laravel\Socialite\SocialiteServiceProvider;
 use SocialiteProviders\Manager\ServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
@@ -38,7 +39,17 @@ abstract class TestCase extends BaseTestCase
         // the default itself is asserted against the shipped config.
         $app['config']->set('laranail.authkit-social-login.api.enabled', true);
 
-        $app['config']->set('app.key', 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=');
+        // Social login's web surface is now a declared AuthKit feature rather than a web.enabled
+        // flag of the social package's own, so an application lists it the way it lists every
+        // other feature. Read at boot, when the routes load, so it has to be set here.
+        $app['config']->set('laranail.authkit.fortify.features', [
+            ...(array) $app['config']->get('laranail.authkit.fortify.features', []),
+            AuthKit::SOCIAL_LOGIN,
+        ]);
+
+        // Generated per run rather than a literal: a scanner cannot tell a placeholder key from a
+        // real one, and this line blocks any commit that touches this file.
+        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
         $app['config']->set('database.default', 'testing');
         $driver = getenv('DB_CONNECTION') ?: 'sqlite';
         $connection = $app['config']->get("database.connections.{$driver}", []);

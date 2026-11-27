@@ -132,7 +132,7 @@ both GET and POST and bypasses CSRF validation for OAuth provider callbacks.
 4. A guest with a trusted verified email and no local account gets a new local account, marked verified, plus a social record.
 5. A missing email, an unverified email, or an existing matching account without a verification claim fails the callback; it never silently links the account. An unrecognised provider slug returns a 404.
 
-Trust is declared per provider on the `SocialProvider` enum: `assertsEmailVerified()` says whether a provider asserts verification at all, and `hasVerifiedEmail()` reads that provider's own claim out of the raw payload. Both matches are exhaustive, so adding a case forces an explicit decision rather than inheriting one. This is what keeps a provider's email claim from becoming an account-takeover path.
+Trust is declared per provider on the `SocialProvider` enum: `assertsEmailVerified()` says whether a provider asserts verification at all, and `hasVerifiedEmail()` reads that provider's own claim out of the raw payload. Both matches are exhaustive, so adding a case forces an explicit decision rather than inheriting one. `hasVerifiedEmail()` also returns `false` immediately when `assertsEmailVerified()` does, so a provider that asserts nothing cannot link on a claim even if its payload carries one — the two answers are made to agree rather than merely expected to. A case that asserts nothing therefore never reaches the claim match, and only a case claiming to verify must declare a claim shape. This is what keeps a provider's email claim from becoming an account-takeover path.
 
 ## Connecting a provider deliberately
 
@@ -224,7 +224,7 @@ unverified or already taken tells an unauthenticated caller which addresses have
 
 ## Adding a provider
 
-The accepted route values are the `SocialProvider` enum cases. Adding a provider requires a package change: add its enum case with an arm in both `assertsEmailVerified()` and `hasVerifiedEmail()`, add its credentials, redirect, and scopes under `laranail.authkit-social-login`, and ensure Socialite has a driver for that key. First-party Socialite drivers work through the normal `services.<provider>` configuration; a third-party driver must be registered with Socialite's extension mechanism, as PayPal is. Add callback tests for an existing identity, a verified email, an unverified or missing email, and authenticated linking before exposing the new provider.
+The accepted route values are the `SocialProvider` enum cases. Adding a provider requires a package change: add its enum case with an arm in `assertsEmailVerified()` — always — and an arm in `hasVerifiedEmail()` naming the claim it reads, if it asserts verification; a provider that asserts nothing short-circuits before that match, so an arm there would never run, add its credentials, redirect, and scopes under `laranail.authkit-social-login`, and ensure Socialite has a driver for that key. First-party Socialite drivers work through the normal `services.<provider>` configuration; a third-party driver must be registered with Socialite's extension mechanism, as PayPal is. Add callback tests for an existing identity, a verified email, an unverified or missing email, and authenticated linking before exposing the new provider.
 
 ---
 

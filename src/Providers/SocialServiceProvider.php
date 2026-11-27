@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Simtabi\Laranail\Package\Tools\Package;
 use Simtabi\Laranail\AuthKit\Social\Actions;
 use Simtabi\Laranail\AuthKit\Social\Services;
+use Simtabi\Laranail\AuthKit\Support\AuthKit;
 use Simtabi\Laranail\AuthKit\Social\Contracts;
 use SocialiteProviders\Apple\AppleExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -104,7 +105,7 @@ class SocialServiceProvider extends PackageServiceProvider
             concrete: Actions\UnlinkSocialAccount::class,
         );
 
-        if (SocialConfig::get('web.enabled', true)
+        if (AuthKit::socialLoginEnabled()
             && SocialConfig::get('web.routes_mode', 'package') === 'package') {
             $this->loadRoutesFrom($this->packagePath('routes/web.php'));
         }

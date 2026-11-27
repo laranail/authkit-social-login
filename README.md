@@ -59,7 +59,9 @@ does not require or install this package; install it separately when social logi
 
 ### Getting started
 
-The installer above does all of this; these are the pieces it touches, for a manual setup:
+The installer above does all of this **except declaring the feature**, which lives in the core's
+config and so belongs to the application; it warns when it finishes if the feature is still off.
+These are the pieces it touches, for a manual setup:
 
 - **Publish tags** — `laranail::authkit-social-login-config` (writes `config/laranail/authkit-social-login.php`, read at
   `laranail.authkit-social-login`; a bare `config/authkit-social-login.php` is a deprecated fallback),
@@ -67,10 +69,16 @@ The installer above does all of this; these are the pieces it touches, for a man
   route file, `laranail::authkit-social-login-routes`.
 - **Migrations** — run `php artisan migrate` after publishing; the package does not load its
   migrations automatically.
+- **Declare the feature** — add `Simtabi\Laranail\AuthKit\Support\AuthKit::SOCIAL_LOGIN` to
+  `laranail.authkit.fortify.features`. The browser buttons and routes are gated on it; without it
+  nothing renders and nothing mounts, whatever else is configured. Upgrading from a release that
+  used `web.enabled`? See [the upgrade guide](docs/upgrading.md).
 - **Env keys** — per provider, `AUTHKIT_<PROVIDER>_CLIENT_ID`, `AUTHKIT_<PROVIDER>_CLIENT_SECRET` and
-  `AUTHKIT_<PROVIDER>_REDIRECT` (for example `AUTHKIT_GOOGLE_CLIENT_ID`). Social login is on by
-  default; `AUTHKIT_SOCIAL_ENABLED=false` switches it off, and `AUTHKIT_SOCIAL_API_ENABLED=true`
-  adds the session-less API routes. Clear the configuration cache after changing them.
+  `AUTHKIT_<PROVIDER>_REDIRECT` (for example `AUTHKIT_GOOGLE_CLIENT_ID`). The package's master
+  switch is on by default and `AUTHKIT_SOCIAL_ENABLED=false` turns the whole package off, API
+  included — it is a different scope from the feature above, which gates the browser surface only,
+  so both have to say yes. `AUTHKIT_SOCIAL_API_ENABLED=true` adds the session-less API routes.
+  Clear the configuration cache after changing them.
 
 ### Usage
 
@@ -107,6 +115,7 @@ The documentation lives in this repository under [`docs/`](docs/).
 - [Configuration](docs/configuration.md) — every key in `laranail.authkit-social-login`
 - [Architecture](docs/architecture.md) — how this package extends the core, and why it is built this way
 - [Release](docs/release.md) — versioning, tagging and what a release must carry
+- [Upgrading](docs/upgrading.md) — moving off the removed `web.enabled` key to the `social-login` feature
 
 ### Operations
 
