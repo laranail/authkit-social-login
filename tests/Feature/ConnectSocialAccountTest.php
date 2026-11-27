@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Session\Store;
 use Workbench\App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Session\ArraySessionHandler;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Simtabi\Laranail\AuthKit\Social\Models\Social;
 use Simtabi\Laranail\AuthKit\Enums\IdentityLinkFailure;
 use Simtabi\Laranail\AuthKit\Social\Enums\SocialProvider;
+use Simtabi\Laranail\AuthKit\Social\Events\IdentityLinked;
 use Simtabi\Laranail\AuthKit\Exceptions\IdentityLinkException;
 use Simtabi\Laranail\AuthKit\Social\Actions\ConnectSocialAccount;
 
@@ -121,6 +123,7 @@ it('starts an attempt and parks the token for the trip to the provider', functio
 /* ---------------------------------------------------------------- the four #12 names */
 
 it('links the identity to the user who started the attempt', function (): void {
+    Event::fake([IdentityLinked::class]);
     Socialite::fake('google', connectIdentity());
     $user = User::factory()->create();
     $session = connectSession();
@@ -131,6 +134,8 @@ it('links the identity to the user who started the attempt', function (): void {
     expect(Social::query()->count())->toBe(1)
         ->and($social->socialable_id)->toBe($user->getAuthIdentifier())
         ->and($social->provider_id)->toBe('123456789');
+    Event::assertDispatchedTimes(IdentityLinked::class, 1);
+
 });
 
 it('refuses a replayed callback', function (): void {
@@ -172,6 +177,7 @@ it('refuses an attempt finished by a different account', function (): void {
 });
 
 it('refuses an identity already linked elsewhere, and leaves it with its owner', function (): void {
+    Event::fake([IdentityLinked::class]);
     Socialite::fake('google', connectIdentity());
     $owner = User::factory()->create(['email' => 'owner@example.com']);
     $user = User::factory()->create(['email' => 'connector@example.com']);
@@ -190,11 +196,14 @@ it('refuses an identity already linked elsewhere, and leaves it with its owner',
     expect($reason)->toBe(IdentityLinkFailure::IdentityOwnedByAnotherUser)
         ->and(Social::query()->count())->toBe(1)
         ->and($link->fresh()->socialable_id)->toBe($owner->getAuthIdentifier());
+    Event::assertDispatchedTimes(IdentityLinked::class, 0);
+
 });
 
 /* ------------------------------------------------------------------ properties */
 
 it('is idempotent for an identity this user already owns', function (): void {
+    Event::fake([IdentityLinked::class]);
     Socialite::fake('google', connectIdentity());
     $user = User::factory()->create();
     $existing = ownedIdentity($user);
@@ -205,6 +214,8 @@ it('is idempotent for an identity this user already owns', function (): void {
 
     expect(Social::query()->count())->toBe(1)
         ->and($social->getKey())->toBe($existing->getKey());
+    Event::assertDispatchedTimes(IdentityLinked::class, 0);
+
 });
 
 it('signs nobody in while connecting', function (): void {

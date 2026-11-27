@@ -49,6 +49,7 @@ class StatelessSocialCallback implements StatelessSocialCallbackInterface
         private readonly SocialiteFactory $socialite,
         private readonly ResolveSocialIdentityInterface $resolver,
         private readonly IssueTokenForUserInterface $issuer,
+        private \Illuminate\Contracts\Events\Dispatcher $events,
     ) {}
 
     public function execute(SocialIdentityProviderInterface $provider, string $guard, ?string $tokenName = null): ?TokenResult
@@ -64,12 +65,16 @@ class StatelessSocialCallback implements StatelessSocialCallbackInterface
         try {
             $socialiteUser = $driver->user();
         } catch (InvalidStateException|ClientException) {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'api'));
+
             return null;
         }
 
         $providerId = $socialiteUser->getId();
 
         if ((! is_string($providerId) && ! is_int($providerId)) || trim((string) $providerId) === '') {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'api'));
+
             return null;
         }
 
@@ -82,12 +87,17 @@ class StatelessSocialCallback implements StatelessSocialCallbackInterface
         );
 
         if (! $user instanceof Authenticatable) {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'api'));
+
             return null;
         }
 
-        return $this->issuer->execute(
+        $result = $this->issuer->execute(
             user: $user,
             name: $tokenName ?? 'api-social-' . $provider->slug(),
         );
+        $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationSucceeded($user::class, (string) $user->getAuthIdentifier(), $provider->slug(), $guard, 'api'));
+
+        return $result;
     }
 }
