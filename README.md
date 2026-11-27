@@ -1,17 +1,13 @@
 # laranail/authkit-social-login
 
-[![Tests](https://img.shields.io/github/actions/workflow/status/laranail/authkit-social-login/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/laranail/authkit-social-login/actions/workflows/tests.yml)
-[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Tests](https://github.com/laranail/authkit-social-login/actions/workflows/tests.yml/badge.svg)](https://github.com/laranail/authkit-social-login/actions/workflows/tests.yml)
+[![Code style](https://github.com/laranail/authkit-social-login/actions/workflows/code-style.yml/badge.svg)](https://github.com/laranail/authkit-social-login/actions/workflows/code-style.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`laranail/authkit-social-login` is not published to Packagist, so there is no registry-version badge to show: see [Install](#install).
+> Socialite-backed sign-in, explicit identity linking and account provisioning for AuthKit.
 
-> Social login for the authkit family: Socialite-backed providers, identity linking and account provisioning.
-
-Requires PHP 8.4+ and Laravel 13, and extends [`laranail/authkit`](https://github.com/laranail/authkit).
-
-Supports Google, Apple, X, LinkedIn, PayPal, GitHub, and Facebook. GitHub uses verified primary
-email addresses; Facebook requires explicit linking before login. See
-[provider setup](docs/social-login.md#github-and-facebook-setup) for credentials and callback URLs.
+Requires PHP `^8.4.1 || ^8.5` and Laravel `^13.0`. This package is pre-1.0; review
+[feature scope](docs/feature-scope.md) before choosing the flows to enable.
 
 ## Install
 
@@ -20,12 +16,13 @@ application's `composer.json`:
 
 ```json
 "repositories": [
-    { "type": "vcs", "url": "https://github.com/laranail/authkit.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/console.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/enumerator.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" },
-    { "type": "composer", "url": "https://repo.packagist.org", "exclude": ["laranail/*"] },
-    { "packagist.org": false }
+    {"type": "vcs", "url": "https://github.com/laranail/authkit-social-login.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/authkit.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/console.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/enumerator.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/package-tools.git"},
+    {"type": "composer", "url": "https://repo.packagist.org", "exclude": ["laranail/*"]},
+    {"packagist.org": false}
 ]
 ```
 
@@ -99,7 +96,7 @@ Everything else is in the [documentation index](#documentation).
 
 ## <a name="documentation"></a>Documentation
 
-Full documentation: <https://opensource.simtabi.com/documentation/laranail/authkit-social-login/>
+The documentation lives in this repository under [`docs/`](docs/).
 
 ### Guides
 
@@ -111,54 +108,21 @@ Full documentation: <https://opensource.simtabi.com/documentation/laranail/authk
 - [Architecture](docs/architecture.md) — how this package extends the core, and why it is built this way
 - [Release](docs/release.md) — versioning, tagging and what a release must carry
 
-## Community
+### Operations
 
-Questions and ideas: [GitHub issues](https://github.com/laranail/authkit-social-login/issues).
+- [Environment variables](docs/environment.md) — supported names and cached configuration
+- [Localization](docs/localization.md) — language files, overrides and fallback
+- [Troubleshooting](docs/troubleshooting.md) — setup checks and common failures
+- [Feature scope](docs/feature-scope.md) — supported flows, limitations and deferred work
+- [Installer](docs/installer.md) — previews and repeatable skipped steps
+- [Testing](docs/testing.md) — local checks, CI databases and integration limits
 
 ## Contributing & security
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues privately — [SECURITY.md](SECURITY.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities privately through the
+[security policy](SECURITY.md). Participation follows the
+[Laranail Code of Conduct](https://github.com/laranail/.github/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
-
-## Localization
-
-English package messages ship in `lang/en/messages.php` under `laranail/authkit-social-login::messages`.
-Laravel uses the current application locale and its configured fallback locale.
-Publish the language files to customize messages or add locales:
-
-```sh
-php artisan vendor:publish --tag=laranail::authkit-social-login-translations
-```
-
-Edit `lang/vendor/laranail/authkit-social-login/en/messages.php`, or add another locale directory there.
-You can override individual keys; the remaining messages keep their package defaults.
-
-## Installer previews and skipped steps
-
-Preview the actions selected by your installation options without writing files:
-
-```sh
-php artisan laranail::authkit-social-login.install --social=google --publish-routes --dry-run --no-interaction
-```
-
-Repeat `--skip` to leave selected steps untouched. Other requested steps still run:
-
-```sh
-php artisan laranail::authkit-social-login.install --social=google --publish-routes --skip=config --skip=environment --no-interaction
-```
-
-| Step | Controls |
-| --- | --- |
-| `config` | Config publishing and selected provider updates |
-| `migrations` | Social accounts migration publishing |
-| `environment` | .env and .env.example provider credentials/callback URLs |
-| `routes` | Optional web route publishing |
-
-Unknown step names fail before any changes. Optional steps still require their enabling options;
-`--skip` does not enable a step. Dry-run can be combined with `--skip` and `--force` and performs
-no writes. On a normal run, `--force` retains its existing overwrite behavior and never overrides
-a skipped step. When skipping prerequisites such as config, migrations, or model edits, provide
-those changes in your application before using the selected features.
+MIT © Simtabi LLC. See [LICENSE](LICENSE).
