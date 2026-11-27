@@ -22,7 +22,7 @@ Intentional linking requires recent credential confirmation and a single-use att
 implicit-linking switch is deprecated and disabled by default. Unlinking the last provider is
 restricted to avoid locking users out. See [Connected accounts](connected-accounts.md).
 
-There is no stable package-level lifecycle event catalog yet. Magic links are outside this package
+Public lifecycle hooks are documented in [Events](events.md). Magic links are outside this package
 and deferred from the AuthKit 1.0 scope.
 
 ---

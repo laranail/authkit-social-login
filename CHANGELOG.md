@@ -18,6 +18,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Provider authentication success/failure and identity link/unlink events, with metadata-only payloads and idempotent mutation dispatch.
+
 - Collect architecture tests in the default PHPUnit suite and require package-tools `^0.1.13` for shared guards.
 
 - GitHub and Facebook providers, installer credential setup, and Blade icons. GitHub uses verified

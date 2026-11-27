@@ -12,9 +12,13 @@ use Simtabi\Laranail\AuthKit\Social\Contracts\CreateSocialAccountActionInterface
 
 class CreateSocialAccountAction implements CreateSocialAccountActionInterface
 {
+    public function __construct(
+        private \Illuminate\Contracts\Events\Dispatcher $events,
+    ) {}
+
     public function execute(Authenticatable $authenticatable, SocialIdentityProviderInterface $provider, SocialiteUser $socialUser): Social
     {
-        return Social::create([
+        $social = Social::create([
             'socialable_type' => get_class($authenticatable),
             'socialable_id'   => $authenticatable->getAuthIdentifier(),
             'provider'        => $provider,
@@ -29,5 +33,9 @@ class CreateSocialAccountAction implements CreateSocialAccountActionInterface
                 ? now()->addSeconds($socialUser->expiresIn)
                 : null,
         ]);
+
+        $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\IdentityLinked($authenticatable::class, (string) $authenticatable->getAuthIdentifier(), $provider->slug(), (string) $social->getKey()));
+
+        return $social;
     }
 }

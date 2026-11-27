@@ -22,6 +22,7 @@ class SocialCallbackAction implements SocialCallbackActionInterface
         private SocialiteFactory $socialite,
         private ResolveSocialIdentityInterface $resolver,
         private \Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface $providers,
+        private \Illuminate\Contracts\Events\Dispatcher $events,
     ) {}
 
     public function execute(Request $request, string $guard): AuthResult
@@ -29,17 +30,23 @@ class SocialCallbackAction implements SocialCallbackActionInterface
         $provider = $this->resolveProvider(request: $request);
 
         if ($request->filled('error')) {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'web'));
+
             return AuthResult::failed();
         }
         try {
             $socialiteUser = $this->socialite->driver($provider->driver())->user();
         } catch (InvalidStateException|ClientException) {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'web'));
+
             return AuthResult::failed();
         }
 
         $providerId = $socialiteUser->getId();
 
         if ((! is_string($providerId) && ! is_int($providerId)) || trim((string) $providerId) === '') {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'web'));
+
             return AuthResult::failed();
         }
 
@@ -50,8 +57,12 @@ class SocialCallbackAction implements SocialCallbackActionInterface
         );
 
         if (! $user instanceof Authenticatable) {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationFailed($provider->slug(), $guard, 'web'));
+
             return AuthResult::failed();
         }
+
+        $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\SocialAuthenticationSucceeded($user::class, (string) $user->getAuthIdentifier(), $provider->slug(), $guard, 'web'));
 
         return AuthResult::passed($user);
     }

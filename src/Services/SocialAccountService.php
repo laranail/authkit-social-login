@@ -22,6 +22,10 @@ use Simtabi\Laranail\AuthKit\Contracts\SocialIdentityProviderInterface;
  */
 class SocialAccountService
 {
+    public function __construct(
+        private \Illuminate\Contracts\Events\Dispatcher $events,
+    ) {}
+
     /**
      * Every provider currently linked to a user.
      *
@@ -72,11 +76,15 @@ class SocialAccountService
             return false;
         }
 
-        Social::query()
+        $deleted = Social::query()
             ->where('socialable_type', $user::class)
             ->where('socialable_id', $user->getAuthIdentifier())
             ->where('provider', $provider->slug())
             ->delete();
+
+        if ($deleted > 0) {
+            $this->events->dispatch(new \Simtabi\Laranail\AuthKit\Social\Events\IdentityUnlinked($user::class, (string) $user->getAuthIdentifier(), $provider->slug()));
+        }
 
         return true;
     }
