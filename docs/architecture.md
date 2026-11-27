@@ -31,8 +31,7 @@ the reusable Blade buttons. It can be installed independently or alongside the p
 - **Never edit the core.** Everything goes through a published contract.
 - **Every public name is vendor-scoped.** Config key, publish tags, and any view, translation,
   command or middleware name it later adds.
-- **On by default, and this one differs from its siblings.** The other authkit siblings are inert
-  placeholders that must not change behaviour on install. This package carries social login moved
+- **On by default, and this one differs from its siblings.** The package carries social login moved
   out of the core, so an upgrading application already has it configured — defaulting off would
   disable it during a routine `composer update` with nothing reported. The switch is
   `laranail.authkit-social-login.enabled`; a test asserts it defaults to **true**, and a second asserts it
@@ -50,8 +49,8 @@ the reusable Blade buttons. It can be installed independently or alongside the p
 - A reusable Blade component and icons for social login buttons
 - Standalone web routes, which inherit preset mounts when `authkit-preset` is installed
 
-Out of scope, and deliberately so: **`laranail/authkit-oauth`** owns OAuth *authentication* plus the
-backend side — app registration, permissions, integrations. This package is the consumer half only.
+Out of scope, and deliberately so: **`laranail/authkit-oauth`** configures the Passport authorization server,
+consent, scopes and OAuth clients. This package is the consumer half only.
 
 ---
 

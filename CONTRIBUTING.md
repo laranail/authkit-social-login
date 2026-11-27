@@ -11,7 +11,8 @@ repositories block already present in `composer.json`. Then:
 
 ```bash
 composer install
-composer test
+XDEBUG_MODE=off vendor/bin/pest --colors=never --no-coverage
+composer pint
 ```
 
 ## What a change needs
@@ -32,8 +33,8 @@ wrong middleware. So every public name carries the vendor and the slug:
 
 | Surface | Shape |
 |---|---|
-| Config key | `authkit-social-login` |
-| Config file | `config/authkit-social-login.php` |
+| Config key | `laranail.authkit-social-login` |
+| Config file | `config/laranail/authkit-social-login.php` |
 | Publish tag | `laranail::authkit-social-login-<suffix>` |
 | View namespace | `laranail/authkit-social-login::<view>` |
 | Translation namespace | `laranail/authkit-social-login::<key>` |
@@ -53,3 +54,21 @@ missing — raise it against the core rather than working around it.
 ## Security
 
 Do not open a public issue for a security problem. See [SECURITY.md](SECURITY.md).
+
+## Documentation and pull requests
+
+Branch from `main` and use Conventional Commits. Keep the README to installation, a working quick
+start and the documentation index; put detailed guides in `docs/`. Link new pages from the index,
+include a return link, and verify commands, route names, config keys and supported features against
+the current implementation. Link sibling-package docs by GitHub URL so they work outside a monorepo.
+
+Before opening a PR, run the sequential test command above and `composer pint`. Database jobs in
+GitHub Actions cover MySQL, MariaDB and PostgreSQL; SQLite is the default local test database.
+No local server database installation is needed. `composer test` currently selects parallel mode;
+use the explicit command above to reproduce the sequential CI run.
+
+Keep PR descriptions concise, link the issue, list validation, and update `CHANGELOG.md` under
+`[Unreleased]`. For authentication behavior, include rejection and authorization cases. Never put
+real tokens, passwords or provider secrets in fixtures, logs or reports.
+
+Participation follows the [Laranail Code of Conduct](https://github.com/laranail/.github/blob/main/CODE_OF_CONDUCT.md).

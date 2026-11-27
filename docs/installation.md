@@ -4,7 +4,7 @@ Add the repositories block, require the package, then configure the providers yo
 
 ## Requirements
 
-PHP 8.4 or 8.5, Laravel 13, and `laranail/authkit` on the same application.
+PHP `^8.4.1 || ^8.5`, Laravel `^13.0`, and `laranail/authkit` on the same application.
 
 ## The repositories block
 
@@ -15,16 +15,17 @@ this package:
 
 ```json
 "repositories": [
-    { "type": "vcs", "url": "https://github.com/laranail/authkit.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/console.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/enumerator.git" },
-    { "type": "vcs", "url": "https://github.com/laranail/package-tools.git" },
-    { "type": "composer", "url": "https://repo.packagist.org", "exclude": ["laranail/*"] },
-    { "packagist.org": false }
+    {"type": "vcs", "url": "https://github.com/laranail/authkit-social-login.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/authkit.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/console.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/enumerator.git"},
+    {"type": "vcs", "url": "https://github.com/laranail/package-tools.git"},
+    {"type": "composer", "url": "https://repo.packagist.org", "exclude": ["laranail/*"]},
+    {"packagist.org": false}
 ]
 ```
 
-The four `vcs` entries are the full `laranail/*` closure of this package's `require` block: it
+The five `vcs` entries include this package and the full `laranail/*` closure of this package's `require` block: it
 requires `authkit`, `console`, `enumerator` and `package-tools` directly, and `authkit` requires
 only `package-tools`, which requires no other `laranail/*` package. The last two lines replace the
 default Packagist repository with one that excludes `laranail/*`, so a stale Packagist copy under
@@ -76,6 +77,10 @@ package separately to opt into social login. Once installed, the preset detects 
 component on login and registration pages, and this package inherits the preset route mounts,
 guards, and middleware. The social package remains usable without the preset; configure its `web`
 settings and render its Blade component from your own views.
+
+## Preview or customize installation
+
+See [Installer](installer.md) for `--dry-run`, repeatable `--skip`, `--force` and non-interactive options.
 
 ---
 
