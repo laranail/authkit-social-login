@@ -17,6 +17,7 @@ class SocialRedirectAction implements SocialRedirectActionInterface
 
     public function __construct(
         private SocialiteFactory $socialite,
+        private \Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface $providers,
     ) {}
 
     public function execute(Request $request): SocialRedirectResult

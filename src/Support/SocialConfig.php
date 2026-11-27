@@ -32,6 +32,7 @@ final class SocialConfig
      */
     public static function get(?string $key = null, mixed $default = null): mixed
     {
+        // @facade-call-exempt: Public static compatibility bridge reads scoped and legacy config at call time.
         $config = config();
 
         if ($key === null) {
@@ -57,6 +58,7 @@ final class SocialConfig
      */
     public static function reportLegacyKey(): bool
     {
+        // @facade-call-exempt: Public static compatibility bridge reads scoped and legacy config at call time.
         if (! config()->has(self::LEGACY_KEY)) {
             return false;
         }

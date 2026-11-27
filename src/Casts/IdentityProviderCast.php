@@ -40,6 +40,7 @@ class IdentityProviderCast implements CastsAttributes
         $slug = (string) $value;
 
         return SocialProvider::tryFrom($slug)
+            // @facade-call-exempt: Eloquent constructs casts outside container autowiring; resolve the current contributed-provider registry at cast time.
             ?? app(abstract: IdentityProviderRegistryInterface::class)->get($slug)
             ?? $slug;
     }

@@ -12,6 +12,7 @@ final class SocialWebRoutes
     public static function currentMount(): array
     {
         $preset = '\\Simtabi\\Laranail\\AuthKit\\Preset\\Support\\AuthPreset';
+        // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
         $route = request()->route();
         $currentName = $route?->getName();
         $currentUri = is_object($route) && method_exists($route, 'uri') ? $route->uri() : '';
@@ -97,29 +98,38 @@ final class SocialWebRoutes
             ? $preset::csrfMiddleware()
             : self::csrfMiddleware();
 
+        // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
         Route::name($name)->group(function () use ($guard, $prefix, $middleware, $csrfMiddleware): void {
+            // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
             Route::prefix($prefix)->middleware([...$middleware, 'guest:' . $guard])->group(function () use ($csrfMiddleware): void {
+                // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
                 Route::get('/social/{provider}', \Simtabi\Laranail\AuthKit\Social\Http\Controllers\WebSocialRedirectController::class)
                     ->name('social.redirect');
 
+                // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
                 Route::match(['GET', 'POST'], '/social/{provider}/callback', \Simtabi\Laranail\AuthKit\Social\Http\Controllers\WebSocialCallbackController::class)
                     ->withoutMiddleware($csrfMiddleware)
                     ->name('social.callback');
             });
 
+            // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
             Route::prefix($prefix)->middleware([...$middleware, 'auth:' . $guard])->group(function () use ($csrfMiddleware): void {
                 // Connecting is declared by reaching these endpoints, which sit behind `auth`,
                 // rather than inferred from being signed in while reaching the guest sign-in pair.
+                // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
                 Route::get('/social/{provider}/connect', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\WebSocialConnectController::class, 'start'])
                     ->name('social.connect');
 
+                // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
                 Route::match(['GET', 'POST'], '/social/{provider}/connect/callback', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\WebSocialConnectController::class, 'callback'])
                     ->withoutMiddleware($csrfMiddleware)
                     ->name('social.connect.callback');
 
+                // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
                 Route::get('/user/social-accounts', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\SocialAccountsController::class, 'index'])
                     ->name('user-social-accounts.index');
 
+                // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
                 Route::delete('/user/social-accounts/{provider}', [\Simtabi\Laranail\AuthKit\Social\Http\Controllers\SocialAccountsController::class, 'destroy'])
                     ->name('user-social-accounts.destroy');
             });
@@ -143,6 +153,7 @@ final class SocialWebRoutes
 
     private static function presetAvailable(string $preset): bool
     {
+        // @facade-call-exempt: Static route composition API registers Laravel routes or reads the current mount at call time.
         return class_exists($preset) && function_exists('config') && config()->has('laranail.authkit-preset');
     }
 }

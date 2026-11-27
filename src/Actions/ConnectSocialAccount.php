@@ -40,6 +40,7 @@ class ConnectSocialAccount implements ConnectSocialAccountInterface
         private SocialiteFactory $socialite,
         private IdentityLinkingInterface $linking,
         private CreateSocialAccountActionInterface $createSocialAccount,
+        private \Simtabi\Laranail\AuthKit\Contracts\IdentityProviderRegistryInterface $providers,
     ) {}
 
     public function start(Request $request, Authenticatable $user, string $guard, string $callbackUrl): SocialConnectResult
